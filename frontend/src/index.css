@@ -1,0 +1,100 @@
+/* Paleta aprobada por el equipo: clara, clasica/moderna, un solo color de acento. Ver 00_Mockups/mockups_sigtm.html */
+:root {
+  --bg: #f4f5f7;
+  --panel: #ffffff;
+  --panel2: #f0f1f4;
+  --border: #dfe2e8;
+  --text: #20242c;
+  --muted: #67707d;
+  --accent: #33608a;
+  --accent-soft: #e7eef4;
+  --danger: #b3432f;
+  --danger-soft: #f7e7e3;
+  --ok: #2f7d5a;
+  --ok-soft: #e5f2ec;
+  --warn: #9a6b1f;
+  --warn-soft: #f5ecdc;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  font-weight: 600;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  text-align: left; color: var(--muted); font-weight: 600; padding: 8px 10px;
+  border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase;
+}
+td { padding: 10px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+
+.pill { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+.pill.abierta, .pill.pendiente-orden { background: var(--warn-soft); color: var(--warn); }
+.pill.proceso { background: var(--accent-soft); color: var(--accent); }
+.pill.cerrada, .pill.pagada { background: var(--ok-soft); color: var(--ok); }
+.pill.pendiente { background: var(--danger-soft); color: var(--danger); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 6px;
+  border: 1px solid var(--border); background: #fff; color: var(--text); font-size: 13px; cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 9px 10px; border-radius: 6px; border: 1px solid var(--border);
+  background: #fff; color: var(--text); font-size: 13px; font-family: inherit;
+}
+
+.error-text { color: var(--danger); font-size: 12.5px; margin-top: 8px; }
+
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar { width: 240px; background: var(--panel); border-right: 1px solid var(--border); padding: 20px 12px; flex-shrink: 0; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.brand .logo { width: 34px; height: 34px; border-radius: 6px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 15px; }
+.brand div b { display: block; font-size: 15px; }
+.brand div span { display: block; font-size: 11px; color: var(--muted); }
+
+.nav-item {
+  display: block; padding: 9px 12px; border-radius: 6px; color: var(--muted); text-decoration: none;
+  font-size: 13.5px; margin-bottom: 1px;
+}
+.nav-item:hover { background: var(--panel2); color: var(--text); }
+.nav-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+.main { flex: 1; padding: 24px 32px; overflow-x: auto; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.topbar h1 { font-size: 19px; margin: 0; font-weight: 600; }
+.topbar .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+
+.grid { display: grid; gap: 16px; }
+.grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.auth-box { max-width: 380px; margin: 40px auto; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.auth-box h2 { margin-top: 0; font-size: 17px; font-weight: 600; }
