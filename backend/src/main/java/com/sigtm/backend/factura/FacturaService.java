@@ -65,6 +65,9 @@ public class FacturaService {
             if (orden.getEstado() != EstadoOrden.CERRADA) {
                 throw new IllegalArgumentException("Solo se pueden facturar ordenes cerradas (orden " + ordenId + ").");
             }
+            if (facturaRepository.existsByOrdenesId(ordenId)) {
+                throw new IllegalArgumentException("La orden " + ordenId + " ya fue incluida en otra factura.");
+            }
 
             ordenes.add(orden);
             total = total.add(itemService.calcularTotalOrden(ordenId));
