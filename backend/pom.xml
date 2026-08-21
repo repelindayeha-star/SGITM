@@ -47,6 +47,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <dependency>
+            <!-- Sin esto, /actuator/health (referenciado en SecurityConfig y usado como
+                 healthcheck de Docker) no existe de verdad y siempre responde 404. -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>

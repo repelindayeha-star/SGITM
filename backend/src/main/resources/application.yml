@@ -39,6 +39,17 @@ spring:
 server:
   port: ${SERVER_PORT:8080}
 
+management:
+  # Solo exponer /actuator/health (para el healthcheck de Docker) -- nunca el resto
+  # del actuator (env, beans, etc.) que podria filtrar configuracion interna.
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 app:
   security:
     jwt:
