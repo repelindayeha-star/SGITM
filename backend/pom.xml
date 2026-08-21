@@ -20,6 +20,10 @@
     <properties>
         <java.version>21</java.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <!-- La version de Lombok que trae spring-boot-starter-parent 3.3.5 (1.18.32)
+             es anterior al soporte de JDK 23+/25 y falla generando getters/setters
+             en maquinas con JDK 25 instalado. Se fija una version mas reciente. -->
+        <lombok.version>1.18.42</lombok.version>
     </properties>
 
     <dependencies>
@@ -120,6 +124,22 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Se declara explicito (en vez de dejarlo heredado del parent) para
+                     forzar el annotation processor de Lombok en la version fijada arriba,
+                     independientemente de que JDK use Maven para compilar. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
