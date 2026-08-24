@@ -16,6 +16,10 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/motocicletas', require('./routes/motocicleta.routes'));
+app.use('/api/citas', require('./routes/cita.routes'));
+app.use('/api/ordenes', require('./routes/ordenTrabajo.routes'));
+app.use('/api/inventario', require('./routes/inventario.routes'));
+app.use('/api/diagnosticos', require('./routes/diagnostico.routes'));
 app.use(errorHandler);
 
 module.exports = app;
