@@ -14,7 +14,8 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/auth.routes'));
-
+app.use('/api/clientes', require('./routes/cliente.routes'));
+app.use('/api/motocicletas', require('./routes/motocicleta.routes'));
 app.use(errorHandler);
 
 module.exports = app;
