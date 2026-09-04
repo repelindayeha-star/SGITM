@@ -14,9 +14,17 @@ const router = Router();
 // Todas las rutas de clientes requieren estar autenticado.
 router.use(autenticar);
 
+// El Cliente consulta su propio perfil (debe ir ANTES de '/:id' para que
+// Express no interprete "me" como si fuera un id).
+router.get(
+  '/me',
+  autorizarRoles('CLIENTE'),
+  clienteController.obtenerMiPerfil
+);
+
 router.post(
   '/',
-  autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA'),
+  autorizarRoles('RECEPCIONISTA'),
   validarCrearCliente,
   validarCampos,
   clienteController.crear
@@ -37,18 +45,10 @@ router.get(
 
 router.put(
   '/:id',
-  autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA'),
+  autorizarRoles('RECEPCIONISTA'),
   validarActualizarCliente,
   validarCampos,
   clienteController.actualizar
-);
-
-router.delete(
-  '/:id',
-  autorizarRoles('ADMINISTRADOR'),
-  validarIdCliente,
-  validarCampos,
-  clienteController.eliminar
 );
 
 module.exports = router;

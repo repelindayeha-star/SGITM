@@ -6,33 +6,30 @@ import {
   CalendarClock,
   Banknote,
   PackageX,
-  LoaderCircle,
   AlertTriangle,
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Layout from '../components/Layout';
 import TarjetaMetrica from '../components/TarjetaMetrica';
+import CargandoInline from '../components/CargandoInline';
+import ErrorBanner from '../components/ErrorBanner';
+import { useAuth } from '../context/AuthContext';
+import { puede } from '../utils/permisos';
 import * as dashboardService from '../services/dashboard.service';
+import { formatearMoneda } from '../utils/formato';
 
 const ETIQUETAS_ESTADO = {
   RECIBIDA: 'Recibida',
-  EN_DIAGNOSTICO: 'En diagnóstico',
-  EN_COTIZACION: 'En cotización',
+  EN_DIAGNOSTICO: 'En diagnostico',
+  EN_COTIZACION: 'En cotizacion',
   APROBADA: 'Aprobada',
-  EN_REPARACION: 'En reparación',
+  EN_REPARACION: 'En reparacion',
   LISTA: 'Lista',
   ENTREGADA: 'Entregada',
   CANCELADA: 'Cancelada',
 };
 
-function formatearMoneda(valor) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    maximumFractionDigits: 0,
-  }).format(valor);
-}
-
 export default function Dashboard() {
+  const { usuario } = useAuth();
   const [resumen, setResumen] = useState(null);
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -45,70 +42,85 @@ export default function Dashboard() {
       .finally(() => setCargando(false));
   }, []);
 
+  // El Administrador supervisa (clientes, inventario, facturacion);
+  // la operacion diaria (ordenes, motos, citas) es dominio de Recepcionista.
+  const verOperacion = puede(usuario, 'ordenes', 'ver');
+
   const totalOrdenesActivas =
     resumen?.ordenesPorEstado
       ?.filter((o) => !['ENTREGADA', 'CANCELADA'].includes(o.estado))
       .reduce((acc, o) => acc + o.cantidad, 0) ?? 0;
 
   return (
-    <div className="min-h-screen bg-taller-900">
-      <Navbar />
+    <Layout>
+      <div className="mb-7">
+        <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide">
+          Panel general
+        </h1>
+        <p className="text-taller-600 text-sm mt-1">
+          {usuario?.rol === 'ADMINISTRADOR'
+            ? 'Vision ejecutiva del taller: clientes, inventario e ingresos.'
+            : 'Resumen operativo del taller en tiempo real.'}
+        </p>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-7">
-          <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide">
-            Panel general
-          </h1>
-          <p className="text-taller-600 text-sm mt-1">Resumen operativo del taller en tiempo real.</p>
-        </div>
+      {cargando && <CargandoInline>Cargando indicadores...</CargandoInline>}
+      <ErrorBanner>{error}</ErrorBanner>
 
-        {cargando && (
-          <div className="flex items-center gap-2 text-taller-600 text-sm">
-            <LoaderCircle className="w-4 h-4 animate-spin" />
-            Cargando indicadores...
-          </div>
-        )}
-
-        {error && (
-          <div className="flex items-center gap-2 rounded-md border border-red-800/60 bg-red-950/40 px-4 py-3 text-red-300 text-sm">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
-            {error}
-          </div>
-        )}
-
-        {resumen && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {resumen && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {verOperacion && (
               <TarjetaMetrica
                 icono={ClipboardList}
-                etiqueta="Órdenes activas"
+                etiqueta="Ordenes activas"
                 valor={totalOrdenesActivas}
                 acento
+                to="/ordenes"
               />
-              <TarjetaMetrica icono={Users} etiqueta="Clientes" valor={resumen.totalClientes} />
-              <TarjetaMetrica icono={Bike} etiqueta="Motocicletas" valor={resumen.totalMotocicletas} />
+            )}
+            <TarjetaMetrica icono={Users} etiqueta="Clientes" valor={resumen.totalClientes} to="/clientes" />
+            {verOperacion && (
+              <TarjetaMetrica
+                icono={Bike}
+                etiqueta="Motocicletas"
+                valor={resumen.totalMotocicletas}
+                to="/motocicletas"
+              />
+            )}
+            {verOperacion && (
               <TarjetaMetrica
                 icono={CalendarClock}
-                etiqueta="Citas próximas"
+                etiqueta="Citas proximas"
                 valor={resumen.citasProximas}
+                to="/citas"
               />
-            </div>
+            )}
+          </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-              <TarjetaMetrica
-                icono={Banknote}
-                etiqueta="Ingresos facturados"
-                valor={formatearMoneda(resumen.ingresosFacturados)}
-                acento
-              />
-              <TarjetaMetrica
-                icono={PackageX}
-                etiqueta="Repuestos stock bajo"
-                valor={resumen.repuestosStockBajo.cantidad}
-              />
-              <TarjetaMetrica icono={ClipboardList} etiqueta="Facturas emitidas" valor={resumen.totalFacturas} />
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+            <TarjetaMetrica
+              icono={Banknote}
+              etiqueta="Ingresos facturados"
+              valor={formatearMoneda(resumen.ingresosFacturados)}
+              acento
+              to="/facturas"
+            />
+            <TarjetaMetrica
+              icono={PackageX}
+              etiqueta="Repuestos stock bajo"
+              valor={resumen.repuestosStockBajo.cantidad}
+              to="/inventario"
+            />
+            <TarjetaMetrica
+              icono={ClipboardList}
+              etiqueta="Facturas emitidas"
+              valor={resumen.totalFacturas}
+              to="/facturas"
+            />
+          </div>
 
+          {verOperacion && (
             <div className="relative bg-taller-850 border border-taller-700 rounded-xl p-6 mb-8">
               <span className="absolute top-2.5 left-2.5 w-1 h-1 rounded-full bg-taller-700" />
               <span className="absolute top-2.5 right-2.5 w-1 h-1 rounded-full bg-taller-700" />
@@ -116,11 +128,11 @@ export default function Dashboard() {
               <span className="absolute bottom-2.5 right-2.5 w-1 h-1 rounded-full bg-taller-700" />
 
               <h2 className="text-taller-100 font-semibold text-sm mb-4 uppercase tracking-wide">
-                Órdenes por estado
+                Ordenes por estado
               </h2>
 
               {resumen.ordenesPorEstado.length === 0 ? (
-                <p className="text-taller-600 text-sm">No hay órdenes registradas todavía.</p>
+                <p className="text-taller-600 text-sm">No hay ordenes registradas todavia.</p>
               ) : (
                 <div className="space-y-2.5">
                   {resumen.ordenesPorEstado.map((item) => {
@@ -146,31 +158,31 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+          )}
 
-            {resumen.repuestosStockBajo.cantidad > 0 && (
-              <div className="relative bg-taller-850 border border-ambar-500/40 rounded-xl p-6">
-                <h2 className="flex items-center gap-2 text-ambar-400 font-semibold text-sm mb-4 uppercase tracking-wide">
-                  <AlertTriangle className="w-4 h-4" />
-                  Repuestos con stock bajo
-                </h2>
-                <div className="space-y-2">
-                  {resumen.repuestosStockBajo.detalle.map((r) => (
-                    <div
-                      key={r.id}
-                      className="flex items-center justify-between border-b border-taller-700 last:border-0 pb-2 last:pb-0"
-                    >
-                      <span className="text-taller-100 text-sm">{r.nombre}</span>
-                      <span className="text-ambar-400 text-xs font-mono">
-                        {r.stock} / mín. {r.stockMinimo}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+          {resumen.repuestosStockBajo.cantidad > 0 && (
+            <div className="relative bg-taller-850 border border-ambar-500/40 rounded-xl p-6">
+              <h2 className="flex items-center gap-2 text-ambar-400 font-semibold text-sm mb-4 uppercase tracking-wide">
+                <AlertTriangle className="w-4 h-4" />
+                Repuestos con stock bajo
+              </h2>
+              <div className="space-y-2">
+                {resumen.repuestosStockBajo.detalle.map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between border-b border-taller-700 last:border-0 pb-2 last:pb-0"
+                  >
+                    <span className="text-taller-100 text-sm">{r.nombre}</span>
+                    <span className="text-ambar-400 text-xs font-mono">
+                      {r.stock} / min. {r.stockMinimo}
+                    </span>
+                  </div>
+                ))}
               </div>
-            )}
-          </>
-        )}
-      </main>
-    </div>
+            </div>
+          )}
+        </>
+      )}
+    </Layout>
   );
 }

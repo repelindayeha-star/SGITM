@@ -28,14 +28,18 @@ async function obtenerPorId(id) {
   return cliente;
 }
 
+
+async function obtenerPorUsuarioId(usuarioId) {
+  const cliente = await clienteRepository.buscarPorUsuarioId(usuarioId);
+  if (!cliente) {
+    throw new AppError('No se encontro un perfil de cliente para este usuario.', 404);
+  }
+  return cliente;
+}
+
 async function actualizar(id, datos) {
-  await obtenerPorId(id); // valida que exista, lanza 404 si no
+  await obtenerPorId(id); 
   return clienteRepository.actualizar(id, datos);
 }
 
-async function eliminar(id) {
-  await obtenerPorId(id);
-  return clienteRepository.eliminar(id);
-}
-
-module.exports = { crear, listar, obtenerPorId, actualizar, eliminar };
+module.exports = { crear, listar, obtenerPorId, obtenerPorUsuarioId, actualizar };

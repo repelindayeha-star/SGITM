@@ -1,0 +1,12 @@
+# Finales de linea: en el repositorio siempre LF.
+# Sin esto, cada archivo abierto en Windows aparece como "modificado"
+# aunque nadie lo haya tocado, y los diffs del equipo se vuelven ilegibles.
+* text=auto eol=lf
+
+# Binarios: git no los debe tocar nunca.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.pdf  binary

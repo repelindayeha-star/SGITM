@@ -27,6 +27,17 @@ async function obtenerPorId(req, res, next) {
   }
 }
 
+// El Cliente autenticado consulta su propio perfil, usando el id de usuario
+// que viene decodificado del JWT (req.usuario.id), no un parametro de la URL.
+async function obtenerMiPerfil(req, res, next) {
+  try {
+    const cliente = await clienteService.obtenerPorUsuarioId(req.usuario.id);
+    res.status(200).json({ exito: true, data: cliente });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function actualizar(req, res, next) {
   try {
     const cliente = await clienteService.actualizar(req.params.id, req.body);
@@ -36,13 +47,4 @@ async function actualizar(req, res, next) {
   }
 }
 
-async function eliminar(req, res, next) {
-  try {
-    await clienteService.eliminar(req.params.id);
-    res.status(200).json({ exito: true, mensaje: 'Cliente eliminado.' });
-  } catch (error) {
-    next(error);
-  }
-}
-
-module.exports = { crear, listar, obtenerPorId, actualizar, eliminar };
+module.exports = { crear, listar, obtenerPorId, obtenerMiPerfil, actualizar };

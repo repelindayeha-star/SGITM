@@ -1,8 +1,6 @@
-import { Link } from 'react-router-dom';
-
-export default function TarjetaMetrica({ icono: Icono, etiqueta, valor, acento = false, to }) {
-  const contenido = (
-    <>
+export default function TarjetaMetrica({ icono: Icono, etiqueta, valor, acento = false }) {
+  return (
+    <div className="relative bg-taller-850 border border-taller-700 rounded-xl p-5">
       <span className="absolute top-2.5 left-2.5 w-1 h-1 rounded-full bg-taller-700" />
       <span className="absolute top-2.5 right-2.5 w-1 h-1 rounded-full bg-taller-700" />
       <span className="absolute bottom-2.5 left-2.5 w-1 h-1 rounded-full bg-taller-700" />
@@ -19,18 +17,6 @@ export default function TarjetaMetrica({ icono: Icono, etiqueta, valor, acento =
       </div>
       <p className="text-taller-600 text-xs font-mono uppercase tracking-wide mb-1">{etiqueta}</p>
       <p className="text-taller-100 text-2xl font-semibold font-display">{valor}</p>
-    </>
+    </div>
   );
-
-  const clases = 'relative bg-taller-850 border border-taller-700 rounded-xl p-5 block';
-
-  if (to) {
-    return (
-      <Link to={to} className={`${clases} hover:border-ambar-400/50 transition-colors cursor-pointer`}>
-        {contenido}
-      </Link>
-    );
-  }
-
-  return <div className={clases}>{contenido}</div>;
 }
