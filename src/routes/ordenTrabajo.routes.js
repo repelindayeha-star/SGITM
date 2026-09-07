@@ -4,6 +4,11 @@ const validarCampos = require('../middlewares/validarCampos');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
 const {
+  soloPropioSiCliente,
+  duenoDesdeParametro,
+  duenoDeOrden,
+} = require('../middlewares/propiedad.middleware');
+const {
   validarCrearOrden,
   validarAsignarMecanico,
   validarCambiarEstadoOrden,
@@ -14,7 +19,9 @@ const {
 
 const router = Router();
 
-// Ruta pública para seguimiento por código/QR: va ANTES del middleware de autenticación.
+// Ruta publica para seguimiento por codigo/QR: va ANTES del middleware de
+// autenticacion. Devuelve una proyeccion reducida (ver el servicio): estado
+// de la orden y nada mas. Sin nombres, ni correos, ni cotizacion, ni factura.
 router.get('/seguimiento/:codigo', validarCodigoOrden, validarCampos, ordenController.obtenerPorCodigo);
 
 router.use(autenticar);
@@ -33,9 +40,22 @@ router.get(
   ordenController.listar
 );
 
-router.get('/:id', validarIdOrden, validarCampos, ordenController.obtenerPorId);
+// El portal del cliente entra por aqui. Sin la comprobacion de propiedad,
+// cambiar el UUID mostraba la orden completa de otro cliente: su nombre, su
+// correo, el desglose de la cotizacion y el total de la factura.
+router.get(
+  '/:id',
+  validarIdOrden,
+  validarCampos,
+  soloPropioSiCliente(duenoDeOrden),
+  ordenController.obtenerPorId
+);
 
-router.get('/cliente/:clienteId', ordenController.listarPorCliente);
+router.get(
+  '/cliente/:clienteId',
+  soloPropioSiCliente(duenoDesdeParametro('clienteId')),
+  ordenController.listarPorCliente
+);
 
 router.get(
   '/mecanico/:mecanicoId',

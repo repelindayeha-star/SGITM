@@ -5,7 +5,14 @@ const AppError = require('../utils/AppError');
 
 const SALT_ROUNDS = 10;
 
-async function registrar({ nombre, email, password, rol }) {
+/**
+ * Registro publico. Crea SIEMPRE un usuario con rol CLIENTE.
+ *
+ * El rol ya no se recibe como parametro: se fija aqui dentro. Aunque el
+ * validador tambien lo rechaza, esta funcion no depende de eso — si manana
+ * alguien la llama desde otro sitio, sigue siendo imposible escalar el rol.
+ */
+async function registrar({ nombre, email, password }) {
   const existente = await usuarioRepository.buscarPorEmail(email);
   if (existente) {
     throw new AppError('Ya existe un usuario registrado con ese correo.', 409);
@@ -17,7 +24,7 @@ async function registrar({ nombre, email, password, rol }) {
     nombre,
     email,
     password: passwordHasheada,
-    rol: rol || 'CLIENTE',
+    rol: 'CLIENTE',
   });
 
   const { password: _, ...usuarioSinPassword } = nuevoUsuario;

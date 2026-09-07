@@ -26,6 +26,7 @@ model Usuario {
 
   cliente          Cliente?
   ordenesAsignadas OrdenTrabajo[]
+  cambiosDeEstado  HistorialEstadoOrden[]
 
   @@map("usuarios")
 }
@@ -110,9 +111,35 @@ model OrdenTrabajo {
 
   diagnostico   Diagnostico?
   factura       Factura?
+  historialEstados HistorialEstadoOrden[]
 
   @@map("ordenes_trabajo")
 }
+/// Auditoria de la maquina de estados: quien movio la orden, de que estado a
+/// cual y cuando. Es lo que convierte "esta en reparacion" en una trazabilidad
+/// real, y lo que le da una fecha a cada paso de la linea de tiempo que ve el
+/// cliente.
+model HistorialEstadoOrden {
+  id             String       @id @default(uuid())
+  ordenId        String
+  orden          OrdenTrabajo @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+
+  // Null solo en el primer asiento, el que se crea junto con la orden.
+  estadoAnterior EstadoOrden?
+  estadoNuevo    EstadoOrden
+
+  // Quien hizo el cambio. Opcional para no perder el historial si algun dia
+  // se da de baja al usuario que lo hizo.
+  usuarioId      String?
+  usuario        Usuario?     @relation(fields: [usuarioId], references: [id])
+
+  nota           String?
+  createdAt      DateTime     @default(now())
+
+  @@index([ordenId, createdAt])
+  @@map("historial_estados_orden")
+}
+
 model Diagnostico {
   id                String       @id @default(uuid())
   ordenId           String       @unique

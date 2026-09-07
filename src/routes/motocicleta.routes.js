@@ -4,6 +4,11 @@ const validarCampos = require('../middlewares/validarCampos');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
 const {
+  soloPropioSiCliente,
+  duenoDesdeParametro,
+  duenoDeMotocicleta,
+} = require('../middlewares/propiedad.middleware');
+const {
   validarCrearMotocicleta,
   validarActualizarMotocicleta,
   validarIdMotocicleta,
@@ -27,15 +32,18 @@ router.get(
   motocicletaController.listar
 );
 
+// Abiertas al rol CLIENTE, pero solo sobre sus propias motocicletas.
 router.get(
   '/:id',
   validarIdMotocicleta,
   validarCampos,
+  soloPropioSiCliente(duenoDeMotocicleta),
   motocicletaController.obtenerPorId
 );
 
 router.get(
   '/cliente/:clienteId',
+  soloPropioSiCliente(duenoDesdeParametro('clienteId')),
   motocicletaController.listarPorCliente
 );
 

@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Package,
   Receipt,
+  UserCog,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,6 +24,7 @@ const ITEMS_MENU = [
   { to: '/ordenes', etiqueta: 'Ordenes de trabajo', icono: ClipboardList, roles: ['RECEPCIONISTA', 'MECANICO'] },
   { to: '/inventario', etiqueta: 'Inventario', icono: Package, roles: ['ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'] },
   { to: '/facturas', etiqueta: 'Facturacion', icono: Receipt, roles: ['ADMINISTRADOR', 'RECEPCIONISTA'] },
+  { to: '/usuarios', etiqueta: 'Usuarios', icono: UserCog, roles: ['ADMINISTRADOR'] },
 ];
 
 export default function Sidebar() {

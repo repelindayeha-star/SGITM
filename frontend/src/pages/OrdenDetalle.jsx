@@ -16,6 +16,7 @@ import { Input, Select, Textarea } from '../components/Campo';
 import ErrorBanner from '../components/ErrorBanner';
 import CargandoInline from '../components/CargandoInline';
 import EstadoBadge from '../components/EstadoBadge';
+import LineaTiempoOrden from '../components/LineaTiempoOrden';
 import Modal from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 import { puede } from '../utils/permisos';
@@ -25,6 +26,7 @@ import * as ordenService from '../services/orden.service';
 import * as diagnosticoService from '../services/diagnostico.service';
 import * as facturaService from '../services/factura.service';
 import * as inventarioService from '../services/inventario.service';
+import * as usuarioService from '../services/usuario.service';
 
 export default function OrdenDetalle() {
   const { id } = useParams();
@@ -126,6 +128,21 @@ export default function OrdenDetalle() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <PanelEstado orden={orden} usuario={usuario} onActualizado={cargarTodo} />
         <PanelMecanico orden={orden} usuario={usuario} onActualizado={cargarTodo} />
+      </div>
+
+      <div className="mb-6">
+        <Panel titulo="Avance de la orden">
+          <LineaTiempoOrden
+            estado={orden.estado}
+            historial={orden.historialEstados || []}
+            mostrarAutor
+          />
+          {/* El enlace que se le entrega al cliente (o se imprime como QR).
+              Es publico a proposito: solo muestra el avance, nada mas. */}
+          <p className="text-taller-600 text-[11px] font-mono mt-4 pt-3 border-t border-taller-700 break-all">
+            Seguimiento del cliente: {`${window.location.origin}/seguimiento/${orden.codigo}`}
+          </p>
+        </Panel>
       </div>
 
       <PanelDiagnostico
@@ -239,17 +256,30 @@ function PanelEstado({ orden, usuario, onActualizado }) {
 }
 
 function PanelMecanico({ orden, usuario, onActualizado }) {
+  const [mecanicos, setMecanicos] = useState([]);
   const [mecanicoId, setMecanicoId] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [errorLocal, setErrorLocal] = useState('');
   const puedeAsignar = puede(usuario, 'ordenes', 'asignarMecanico');
 
+  // Antes esto era un campo de texto donde habia que pegar a mano el UUID del
+  // mecanico, sacado de la base de datos: la nota decia que se obtenia "desde
+  // el registro de usuarios", un registro que no existia. Ahora se listan
+  // desde /api/usuarios?rol=MECANICO&activo=true.
+  useEffect(() => {
+    if (!puedeAsignar) return;
+    usuarioService
+      .listarMecanicos()
+      .then(setMecanicos)
+      .catch(() => setErrorLocal('No se pudo cargar la lista de mecanicos.'));
+  }, [puedeAsignar]);
+
   async function manejarAsignar() {
-    if (!mecanicoId.trim()) return;
+    if (!mecanicoId) return;
     setGuardando(true);
     setErrorLocal('');
     try {
-      await ordenService.asignarMecanico(orden.id, mecanicoId.trim());
+      await ordenService.asignarMecanico(orden.id, mecanicoId);
       setMecanicoId('');
       onActualizado();
     } catch (err) {
@@ -271,26 +301,32 @@ function PanelMecanico({ orden, usuario, onActualizado }) {
 
       {puedeAsignar && (
         <>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={mecanicoId}
-              onChange={(e) => setMecanicoId(e.target.value)}
-              placeholder="ID del usuario mecanico"
-              className="flex-1 bg-taller-900 border border-taller-700 rounded-md px-2.5 py-2 text-taller-100 placeholder-taller-600 text-xs font-mono outline-none focus:border-ambar-400"
-            />
+          <div className="flex items-end gap-2">
+            <div className="flex-1 min-w-0">
+              <Select
+                value={mecanicoId}
+                onChange={(e) => setMecanicoId(e.target.value)}
+                disabled={mecanicos.length === 0}
+              >
+                <option value="">
+                  {mecanicos.length === 0 ? 'No hay mecanicos activos' : 'Selecciona un mecanico'}
+                </option>
+                {mecanicos.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nombre}
+                  </option>
+                ))}
+              </Select>
+            </div>
             <button
               onClick={manejarAsignar}
-              disabled={!mecanicoId.trim() || guardando}
-              className="bg-ambar-400 hover:bg-ambar-500 disabled:opacity-50 text-taller-950 font-semibold text-xs rounded-md px-3 py-2 flex items-center gap-1.5 transition-colors shrink-0"
+              disabled={!mecanicoId || guardando}
+              className="bg-ambar-400 hover:bg-ambar-500 disabled:opacity-50 text-taller-950 font-semibold text-xs rounded-md px-3 py-2.5 flex items-center gap-1.5 transition-colors shrink-0"
             >
               {guardando && <LoaderCircle className="w-3.5 h-3.5 animate-spin" />}
               Asignar
             </button>
           </div>
-          <p className="text-taller-700 text-[11px] mt-2">
-            El identificador (UUID) del mecanico se obtiene desde el registro de usuarios.
-          </p>
           {errorLocal && <p className="text-red-400 text-xs mt-2">{errorLocal}</p>}
         </>
       )}

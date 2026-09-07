@@ -22,7 +22,8 @@ function generarCodigo() {
   return `OT-${anio}-${aleatorio}`;
 }
 
-async function crear({ clienteId, motocicletaId, descripcionProblema }) {
+// usuarioId = quien recibe la moto. Queda como primer asiento del historial.
+async function crear({ clienteId, motocicletaId, descripcionProblema, usuarioId }) {
   const cliente = await clienteRepository.buscarPorId(clienteId);
   if (!cliente) {
     throw new AppError('El cliente no existe.', 404);
@@ -39,7 +40,7 @@ async function crear({ clienteId, motocicletaId, descripcionProblema }) {
 
   const codigo = generarCodigo();
 
-  return ordenRepository.crear({ codigo, clienteId, motocicletaId, descripcionProblema });
+  return ordenRepository.crear({ codigo, clienteId, motocicletaId, descripcionProblema, usuarioId });
 }
 
 async function listar() {
@@ -54,8 +55,10 @@ async function obtenerPorId(id) {
   return orden;
 }
 
+// Seguimiento publico por codigo/QR: devuelve la proyeccion reducida del
+// repositorio (estado y datos de la moto), nunca el expediente completo.
 async function obtenerPorCodigo(codigo) {
-  const orden = await ordenRepository.buscarPorCodigo(codigo);
+  const orden = await ordenRepository.buscarPorCodigoPublico(codigo);
   if (!orden) {
     throw new AppError('No se encontró ninguna orden con ese código.', 404);
   }
@@ -92,7 +95,9 @@ async function asignarMecanico(id, mecanicoId) {
   return ordenRepository.asignarMecanico(id, mecanicoId);
 }
 
-async function cambiarEstado(id, nuevoEstado) {
+// usuarioId = quien ejecuta el cambio. Sin ese dato el historial no sirve
+// como auditoria: registraria el que, pero no el quien.
+async function cambiarEstado(id, nuevoEstado, usuarioId, nota) {
   const orden = await obtenerPorId(id);
 
   const permitidos = TRANSICIONES_VALIDAS[orden.estado] || [];
@@ -105,7 +110,11 @@ async function cambiarEstado(id, nuevoEstado) {
     );
   }
 
-  return ordenRepository.cambiarEstado(id, nuevoEstado);
+  return ordenRepository.cambiarEstado(id, nuevoEstado, {
+    usuarioId,
+    estadoAnterior: orden.estado,
+    nota,
+  });
 }
 
 async function actualizar(id, datos) {

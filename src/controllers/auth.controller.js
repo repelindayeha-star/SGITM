@@ -3,11 +3,14 @@ const captchaService = require('../services/captcha.service');
 
 async function registrar(req, res, next) {
   try {
-    const { nombre, email, password, rol, captchaToken } = req.body;
+    // 'rol' no se lee del cuerpo a proposito: este endpoint es publico y
+    // solo crea clientes. Las cuentas de personal se crearan desde el
+    // modulo de usuarios, que exige estar autenticado como ADMINISTRADOR.
+    const { nombre, email, password, captchaToken } = req.body;
 
     await captchaService.verificarCaptcha(captchaToken);
 
-    const usuario = await authService.registrar({ nombre, email, password, rol });
+    const usuario = await authService.registrar({ nombre, email, password });
 
     res.status(201).json({
       exito: true,

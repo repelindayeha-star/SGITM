@@ -48,6 +48,16 @@ const PERMISOS = {
   dashboard: {
     ver: ['ADMINISTRADOR', 'RECEPCIONISTA'],
   },
+  // Gobierno del sistema, no operacion diaria: crear personal y mover roles
+  // es del Administrador. La Recepcionista solo lista, porque necesita ver
+  // los mecanicos para asignarlos a una orden.
+  usuarios: {
+    ver: ['ADMINISTRADOR'],
+    listar: ['ADMINISTRADOR', 'RECEPCIONISTA'],
+    crear: ['ADMINISTRADOR'],
+    editar: ['ADMINISTRADOR'],
+    activar: ['ADMINISTRADOR'],
+  },
 };
 
 /**

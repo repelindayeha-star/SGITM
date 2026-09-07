@@ -2,7 +2,15 @@ const ordenService = require('../services/ordenTrabajo.service');
 
 async function crear(req, res, next) {
   try {
-    const orden = await ordenService.crear(req.body);
+    // Campos explicitos en vez de req.body entero: asi ningun campo extra
+    // del cuerpo llega al servicio sin pasar por el validador.
+    const { clienteId, motocicletaId, descripcionProblema } = req.body;
+    const orden = await ordenService.crear({
+      clienteId,
+      motocicletaId,
+      descripcionProblema,
+      usuarioId: req.usuario.id,
+    });
     res.status(201).json({ exito: true, mensaje: 'Orden de trabajo creada correctamente.', data: orden });
   } catch (error) {
     next(error);
@@ -66,7 +74,14 @@ async function asignarMecanico(req, res, next) {
 
 async function cambiarEstado(req, res, next) {
   try {
-    const orden = await ordenService.cambiarEstado(req.params.id, req.body.estado);
+    // req.usuario lo pone el middleware `autenticar`. Aqui es donde el
+    // historial deja de ser anonimo.
+    const orden = await ordenService.cambiarEstado(
+      req.params.id,
+      req.body.estado,
+      req.usuario.id,
+      req.body.nota
+    );
     res.status(200).json({ exito: true, mensaje: 'Estado de la orden actualizado.', data: orden });
   } catch (error) {
     next(error);

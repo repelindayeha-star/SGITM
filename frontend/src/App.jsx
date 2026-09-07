@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import NoAutorizado from './pages/NoAutorizado';
 import Dashboard from './pages/Dashboard';
 import PortalCliente from './pages/PortalCliente';
+import SeguimientoPublico from './pages/SeguimientoPublico';
 
 import Clientes from './pages/Clientes';
 import ClienteFormulario from './pages/ClienteFormulario';
@@ -22,6 +23,7 @@ import OrdenDetalle from './pages/OrdenDetalle';
 
 import Inventario from './pages/Inventario';
 import Facturas from './pages/Facturas';
+import Usuarios from './pages/Usuarios';
 
 function App() {
   return (
@@ -31,6 +33,11 @@ function App() {
           {/* Publicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/no-autorizado" element={<NoAutorizado />} />
+
+          {/* Seguimiento por codigo/QR: sin sesion, cualquiera con el codigo.
+              Dos rutas para que funcione escrito a mano o escaneado. */}
+          <Route path="/seguimiento" element={<SeguimientoPublico />} />
+          <Route path="/seguimiento/:codigo" element={<SeguimientoPublico />} />
 
           {/* Panel administrativo: Administrador y Recepcionista */}
           <Route
@@ -138,6 +145,16 @@ function App() {
             element={
               <RutaProtegida rolesPermitidos={['ADMINISTRADOR', 'RECEPCIONISTA']}>
                 <Facturas />
+              </RutaProtegida>
+            }
+          />
+
+          {/* Usuarios: gobierno del sistema, exclusivo del Administrador */}
+          <Route
+            path="/usuarios"
+            element={
+              <RutaProtegida rolesPermitidos={['ADMINISTRADOR']}>
+                <Usuarios />
               </RutaProtegida>
             }
           />

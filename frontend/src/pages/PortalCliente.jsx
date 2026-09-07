@@ -5,6 +5,7 @@ import CargandoInline from '../components/CargandoInline';
 import ErrorBanner from '../components/ErrorBanner';
 import EmptyState from '../components/EmptyState';
 import EstadoBadge from '../components/EstadoBadge';
+import LineaTiempoOrden from '../components/LineaTiempoOrden';
 import Modal from '../components/Modal';
 import { Select, Input, Textarea } from '../components/Campo';
 import { formatearFechaHora, formatearMoneda, aInputDatetimeLocal } from '../utils/formato';
@@ -116,7 +117,12 @@ export default function PortalCliente() {
                           <EstadoBadge estado={orden.estado} />
                         </div>
                         <p className="text-taller-200 text-sm mb-2">{orden.descripcionProblema}</p>
-                        <p className="text-taller-600 text-xs font-mono mb-3">{orden.motocicleta?.placa}</p>
+                        <p className="text-taller-600 text-xs font-mono mb-4">{orden.motocicleta?.placa}</p>
+
+                        <LineaTiempoOrden
+                          estado={orden.estado}
+                          historial={orden.historialEstados || []}
+                        />
 
                         {orden.diagnostico && (
                           <div className="border-t border-taller-700 pt-3 text-xs">

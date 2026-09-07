@@ -4,6 +4,10 @@ const validarCampos = require('../middlewares/validarCampos');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
 const {
+  soloPropioSiCliente,
+  duenoDesdeParametro,
+} = require('../middlewares/propiedad.middleware');
+const {
   validarCrearCliente,
   validarActualizarCliente,
   validarIdCliente,
@@ -36,10 +40,14 @@ router.get(
   clienteController.listar
 );
 
+// Aqui el dueno del recurso es el propio :id, porque es un perfil de cliente.
+// Sin esta comprobacion, un cliente podia leer el telefono y la direccion de
+// cualquier otro con solo cambiar el UUID.
 router.get(
   '/:id',
   validarIdCliente,
   validarCampos,
+  soloPropioSiCliente(duenoDesdeParametro('id')),
   clienteController.obtenerPorId
 );
 
