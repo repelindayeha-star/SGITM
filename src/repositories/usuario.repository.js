@@ -25,6 +25,22 @@ async function buscarPorIdSeguro(id) {
   return prisma.usuario.findUnique({ where: { id }, select: camposSeguros });
 }
 
+// Lo que el middleware de autenticacion necesita en cada peticion: quien es,
+// si sigue activo y desde cuando vale su contrasena. Sin el hash.
+async function buscarParaAutenticar(id) {
+  return prisma.usuario.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      nombre: true,
+      email: true,
+      rol: true,
+      activo: true,
+      passwordCambiadaEn: true,
+    },
+  });
+}
+
 async function listar({ rol, activo } = {}) {
   return prisma.usuario.findMany({
     where: {
@@ -69,6 +85,7 @@ module.exports = {
   buscarPorEmail,
   buscarPorId,
   buscarPorIdSeguro,
+  buscarParaAutenticar,
   listar,
   crear,
   actualizar,

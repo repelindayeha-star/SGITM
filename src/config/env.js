@@ -52,6 +52,18 @@ const env = {
   recaptcha: {
     secreto: process.env.RECAPTCHA_SECRET_KEY,
   },
+
+  // El correo no es obligatorio para arrancar: sin proveedor configurado el
+  // sistema cae a una bandeja de prueba y avisa por consola. Lo que no puede
+  // pasar es que parezca configurado sin estarlo, de ahi el indicador.
+  smtp: {
+    configurado: Boolean(process.env.SMTP_HOST),
+    host: process.env.SMTP_HOST,
+    puerto: Number(process.env.SMTP_PORT) || 587,
+    usuario: process.env.SMTP_USER,
+    password: process.env.SMTP_PASS,
+    remitente: process.env.SMTP_FROM || 'SIGTM Moto Nexus <no-responder@sigtm.com>',
+  },
 };
 
 module.exports = env;

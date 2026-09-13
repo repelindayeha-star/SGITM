@@ -128,6 +128,10 @@ async function eliminar(id) {
 }
 
 module.exports = {
+  // Se exporta para poder comprobarla con pruebas automatizadas sin tocar la
+  // base de datos: la maquina de estados es la regla de negocio central y es
+  // la que mas cara sale si alguien la rompe sin darse cuenta.
+  TRANSICIONES_VALIDAS,
   crear,
   listar,
   obtenerPorId,
