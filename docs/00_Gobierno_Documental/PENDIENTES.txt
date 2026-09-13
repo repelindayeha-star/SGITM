@@ -1,0 +1,149 @@
+PENDIENTES - SIGTM / Moto Nexus
+Actualizado: 13/09/2026
+
+
+FECHAS
+------
+Congelacion de codigo: 18/09/2026
+Entrega:               20/09/2026
+
+
+LO QUE SE CERRO EL 13/09
+------------------------
+[x] BASE DE DATOS. La cadena de conexion traia channel_binding=require, que
+    Prisma no soporta: por eso la base figuraba como inalcanzable. Quitado.
+    Ademas faltaban dos migraciones. La tabla historial_estados_orden NO
+    existia, asi que la auditoria de cambios de estado fallaba en ejecucion
+    aunque el codigo estuviera escrito. Aplicadas con migrate deploy, sin
+    reset y sin perder datos. Sin deriva contra el esquema.
+
+[x] RECUPERACION DE CONTRASENA. No existia: ni modelo, ni servicio, ni rutas,
+    ni pantallas. Construida completa. Enlace de un solo uso que caduca en 30
+    minutos, guardado como huella SHA-256. Responde lo mismo exista o no la
+    cuenta, para no dejar averiguar quien esta registrado.
+    Verificado: 15 comprobaciones contra la base real.
+
+[x] VERIFICACION DE CORREO al registrarse.
+
+[x] AVISO AL CLIENTE cuando su moto cambia de etapa (RF-063). Solo cuando
+    cambia el paso que el cliente ve: un recorrido completo manda cuatro
+    correos, no seis. Verificado: 12 comprobaciones.
+
+[x] SEG-08. El captcha del login enviaba un valor fijo. Conectado el
+    componente real; el boton queda inactivo hasta resolver el desafio.
+
+[x] SEG-04. Cambiar la contrasena ahora si cierra las sesiones abiertas. Antes,
+    a quien le robaban la cuenta no le servia de nada cambiar la clave.
+
+[x] SEG-07 y parte de DT-02. Limite de intentos por ruta, con contador propio
+    cada uno, y cabeceras de seguridad con helmet.
+
+[x] DT-07. 32 pruebas de unidad que no tocan la base de datos, mas 27
+    comprobaciones de integracion. Antes "npm test" respondia que no habia
+    pruebas definidas.
+
+[x] DT-08. Integracion continua en GitHub Actions.
+
+[x] ACC-01. Nuevo token taller-400 (#9A9891, 6,04:1 sobre el fondo). 100 usos
+    corregidos en 26 archivos.
+
+[x] DOCKER escrito y validado: Dockerfile, frontend/Dockerfile,
+    docker-compose.yml y los dos .dockerignore.
+
+[x] CATALOGO DE ENDPOINTS corregido. El documento de arquitectura listaba
+    cuatro endpoints de recuperacion que no existian y le faltaban los cuatro
+    reales. Ahora las 61 filas coinciden una a una con el codigo, y el
+    inventario se puede regenerar con herramientas/listar-endpoints.js
+
+[x] ACENTOS. Diez lineas habian quedado con los acentos rotos al pasar los
+    archivos por una herramienta de Windows. Reparadas contra el original.
+    herramientas/revisar-encoding.js lo detecta y la CI lo comprueba.
+
+
+PENDIENTE - LO QUE BLOQUEA
+--------------------------
+[ ] PEN-03  Los correos no llegan al destinatario.
+            El .env tiene las variables SMTP_* pero vacias, asi que el sistema
+            cae a una bandeja de prueba (Ethereal): el correo se "envia" y se
+            puede abrir por un enlace que sale en la consola, pero nadie lo
+            recibe. Para la demostracion hay que poner un proveedor real.
+            Brevo da 300 correos diarios gratis y no exige dominio propio.
+            Una hora. La tiene que hacer alguien con cuenta propia.
+
+[ ] PEN-04  Repositorio. Decidido: repositorio nuevo bajo la cuenta del lider,
+            importando la historia completa para conservar las fechas
+            (18/08 a 13/09). Reasignar la autoria por area antes del primer
+            envio, cuando todavia nadie ha clonado. Falta: los correos de
+            GitHub de los tres y crear el repositorio vacio.
+            OJO: en main hay un commit firmado por kevinzapatajega@gmail.com,
+            que no es del equipo. Hay que reasignarlo.
+
+[ ] PEN-10  Probar Docker de verdad. La configuracion esta validada con
+            "docker compose config" pero no ejecutada: Docker Desktop no
+            estaba en marcha.
+
+
+PENDIENTE - NO BLOQUEA
+----------------------
+[ ] PEN-05  Las 13 capturas de pantalla del Manual de Usuario. CERO hechas.
+            Cada hueco lleva la instruccion de que pantalla capturar y con
+            que cuenta. Solo puede hacerlo alguien con la aplicacion andando.
+
+[ ] PEN-07  Exportar los cinco diagramas a /docs/arquitectura/diagramas:
+            contexto, contenedores, componentes, modelo entidad-relacion y
+            maquina de estados de la orden.
+
+[ ] PEN-08  Los apellidos de los tres integrantes. Todos los entregables
+            dicen literalmente "[apellidos por completar]". No se inventaron
+            a proposito.
+
+[ ] PEN-09  Etiquetar la version en el repositorio al congelar el codigo, y
+            anotar el identificador en el Informe de Cierre. Sin etiqueta,
+            "lo que se entrego" es lo que hubiera ese dia en la rama.
+
+[ ] PEN-11  Actualizar el Informe de Cierre, el Backlog y la Matriz de
+            Trazabilidad con lo construido el 13/09. La Lista de Chequeo, el
+            Plan de Calidad y el documento de Arquitectura ya estan al dia.
+
+[ ] PEN-12  Hay archivos .jsx sueltos en src/components del servidor
+            (Layout, Sidebar, TarjetaMetrica). No los usa nadie: son del
+            frontend y estan en la carpeta equivocada. Conviene quitarlos
+            antes de que un jurado los vea ahi.
+
+
+DEUDA CONOCIDA Y ACEPTADA (no son descuidos)
+--------------------------------------------
+[ ] DT-01  La sesion se guarda en localStorage y no en cookie httpOnly. Es
+           mas debil frente a inyeccion de scripts. Cambiarlo toca el
+           interceptor de axios, el cierre de sesion y el flujo completo; se
+           decidio no asumir ese riesgo a una semana de la entrega.
+[ ] DT-03  El limite de intentos vive en memoria del proceso. Con mas de una
+           instancia, cada una llevaria su propia cuenta.
+[ ] DT-04  El inventario no se descuenta solo al terminar la reparacion: la
+           salida se registra a mano.
+[ ] DT-05  El ajuste de existencias no es transaccional.
+[ ] DT-06  El metodo de pago es texto libre en lugar de lista controlada.
+[ ] DT-09  Los listados no estan paginados.
+[ ] DT-10  La API no esta publicada en formato navegable (sin Swagger).
+
+
+COMO COMPROBAR QUE TODO SIGUE BIEN
+----------------------------------
+    npm test                      32 pruebas, sin base de datos
+    npm run test:integracion      27 comprobaciones contra la base real
+    npm run comprobar:acentos     debe decir 0
+    npx prisma migrate status     debe decir que esta al dia
+    node herramientas/listar-endpoints.js     debe dar 61
+
+
+NOTA SOBRE ESTOS DOCUMENTOS
+---------------------------
+Estan verificados contra el codigo real, no contra supuestos. Donde algo no se
+cumple, esta declarado como no cumplido. El 13/09 esa costumbre sirvio para
+algo concreto: al comparar los entregables con el codigo aparecieron cuatro
+cosas que los documentos daban por hechas y no existian. Se construyeron ese
+mismo dia.
+
+Un dato inventado que el instructor detecta cuesta mas que un pendiente
+reconocido, y estos documentos se sustentan delante de alguien que puede abrir
+el codigo.
