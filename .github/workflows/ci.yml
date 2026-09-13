@@ -1,0 +1,84 @@
+name: Integracion continua
+
+# Se ejecuta en cada envio a las ramas principales y en cada solicitud de
+# incorporacion. Con tres personas trabajando en paralelo, esto es lo que
+# avisa de que alguien rompio algo ANTES de que llegue a main.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  servidor:
+    name: Servidor - pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # El cliente de Prisma se genera a partir del esquema. Sin esto, todo lo
+      # que importe '@prisma/client' falla al cargarse.
+      - name: Generar el cliente de Prisma
+        run: npx prisma generate
+
+      # Solo las pruebas de unidad: no tocan la base de datos, asi que no hace
+      # falta ninguna credencial. Las de integracion se corren a mano contra
+      # la base compartida (npm run test:integracion).
+      - name: Pruebas de unidad
+        run: npm test
+
+      # Comprueba que el esquema esta bien formado y que las migraciones
+      # cuadran con el. Una migracion olvidada rompe la aplicacion en el
+      # equipo del companero, no en el tuyo.
+      - name: Validar el esquema de datos
+        run: npx prisma validate
+
+  cliente:
+    name: Cliente - compilacion
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Que compile no garantiza que funcione, pero que NO compile garantiza
+      # que no funciona. Es la red minima.
+      - name: Compilar
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:3001/api
+          VITE_RECAPTCHA_SITE_KEY: clave-de-compilacion
+
+  secretos:
+    name: Ningun secreto en el repositorio
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Un .env subido por accidente es el error mas caro y mas facil de
+      # cometer. Que lo pare una maquina y no la memoria de alguien.
+      - name: Buscar archivos .env versionados
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "ERROR: hay un archivo .env en el repositorio."
+            exit 1
+          fi
+          echo "OK: no hay ningun .env versionado."

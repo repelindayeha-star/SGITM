@@ -1,0 +1,47 @@
+# SIGTM - Moto Nexus
+#
+# Levanta el proyecto completo con un solo comando:
+#     docker compose up
+#
+# La base de datos NO se levanta aqui: vive en Neon, en la nube, y es la
+# misma para los tres integrantes. Las credenciales salen del .env, que no
+# esta en el repositorio.
+
+services:
+  api:
+    build: .
+    container_name: sigtm-api
+    env_file:
+      - .env
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      # Dentro del contenedor, pero el navegador entra desde el equipo: la
+      # direccion del cliente es la del equipo, no la de la red de Docker.
+      FRONTEND_URL: http://localhost:5173
+    ports:
+      - '3001:3001'
+    volumes:
+      # Solo las carpetas de codigo. node_modules se queda el de la imagen,
+      # que se instalo para Linux: montar el de Windows encima rompe bcrypt
+      # y el motor de Prisma, que son binarios compilados por sistema.
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    container_name: sigtm-web
+    # Vite lee las VITE_* al arrancar. Se toman del mismo archivo que se usa
+    # sin Docker, para que no haya dos sitios donde cambiar lo mismo.
+    env_file:
+      - ./frontend/.env
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+    depends_on:
+      - api
+    restart: unless-stopped
