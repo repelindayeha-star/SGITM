@@ -24,38 +24,73 @@ model Usuario {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
+  // Momento del ultimo cambio de contrasena. Un token firmado ANTES de esta
+  // fecha deja de ser valido: asi, restablecer la contrasena cierra de verdad
+  // las sesiones que ya estaban abiertas (hallazgo SEG-04).
+  passwordCambiadaEn DateTime @default(now())
+
+  // El correo se da por verificado cuando la persona usa el enlace que se le
+  // envia al registrarse.
+  emailVerificado Boolean @default(false)
+
   cliente          Cliente?
   ordenesAsignadas OrdenTrabajo[]
   cambiosDeEstado  HistorialEstadoOrden[]
+  tokensSeguridad  TokenSeguridad[]
 
   @@map("usuarios")
 }
+
+enum TipoTokenSeguridad {
+  RECUPERACION_PASSWORD
+  VERIFICACION_EMAIL
+}
+
+// Un solo uso, con caducidad, y guardado cifrado.
+//
+// Lo que viaja en el correo es el token en claro; aqui solo queda su huella
+// SHA-256. Si alguien leyera esta tabla no podria construir el enlace: no
+// existe forma de volver del hash al token.
+model TokenSeguridad {
+  id        String             @id @default(uuid())
+  usuarioId String
+  usuario   Usuario            @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  tokenHash String             @unique
+  tipo      TipoTokenSeguridad
+  expiraEn  DateTime
+  usadoEn   DateTime?
+  createdAt DateTime           @default(now())
+
+  @@index([usuarioId, tipo])
+  @@map("tokens_seguridad")
+}
+
 model Cliente {
-  id            String         @id @default(uuid())
-  usuarioId     String         @unique
-  usuario       Usuario        @relation(fields: [usuarioId], references: [id])
-  telefono      String
-  direccion     String?
-  motocicletas  Motocicleta[]
-  citas         Cita[]
-  ordenes       OrdenTrabajo[]
-  createdAt     DateTime       @default(now())
+  id           String         @id @default(uuid())
+  usuarioId    String         @unique
+  usuario      Usuario        @relation(fields: [usuarioId], references: [id])
+  telefono     String
+  direccion    String?
+  motocicletas Motocicleta[]
+  citas        Cita[]
+  ordenes      OrdenTrabajo[]
+  createdAt    DateTime       @default(now())
 
   @@map("clientes")
 }
 
 model Motocicleta {
-  id         String         @id @default(uuid())
-  clienteId  String
-  cliente    Cliente        @relation(fields: [clienteId], references: [id])
-  placa      String         @unique
-  marca      String
-  modelo     String
-  anio       Int
-  color      String?
-  citas      Cita[]
-  ordenes    OrdenTrabajo[]
-  createdAt  DateTime       @default(now())
+  id        String         @id @default(uuid())
+  clienteId String
+  cliente   Cliente        @relation(fields: [clienteId], references: [id])
+  placa     String         @unique
+  marca     String
+  modelo    String
+  anio      Int
+  color     String?
+  citas     Cita[]
+  ordenes   OrdenTrabajo[]
+  createdAt DateTime       @default(now())
 
   @@map("motocicletas")
 }
@@ -93,36 +128,37 @@ enum EstadoOrden {
 }
 
 model OrdenTrabajo {
-  id            String       @id @default(uuid())
-  codigo        String       @unique  // código público para seguimiento (QR)
-  clienteId     String
-  cliente       Cliente      @relation(fields: [clienteId], references: [id])
-  motocicletaId String
-  motocicleta   Motocicleta  @relation(fields: [motocicletaId], references: [id])
-  mecanicoId    String?
-  mecanico      Usuario?     @relation(fields: [mecanicoId], references: [id])
-  estado        EstadoOrden  @default(RECIBIDA)
+  id                  String      @id @default(uuid())
+  codigo              String      @unique // código público para seguimiento (QR)
+  clienteId           String
+  cliente             Cliente     @relation(fields: [clienteId], references: [id])
+  motocicletaId       String
+  motocicleta         Motocicleta @relation(fields: [motocicletaId], references: [id])
+  mecanicoId          String?
+  mecanico            Usuario?    @relation(fields: [mecanicoId], references: [id])
+  estado              EstadoOrden @default(RECIBIDA)
   descripcionProblema String
-  observaciones String?
-  fechaRecibido DateTime     @default(now())
-  fechaEntrega  DateTime?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  observaciones       String?
+  fechaRecibido       DateTime    @default(now())
+  fechaEntrega        DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
-  diagnostico   Diagnostico?
-  factura       Factura?
+  diagnostico      Diagnostico?
+  factura          Factura?
   historialEstados HistorialEstadoOrden[]
 
   @@map("ordenes_trabajo")
 }
+
 /// Auditoria de la maquina de estados: quien movio la orden, de que estado a
 /// cual y cuando. Es lo que convierte "esta en reparacion" en una trazabilidad
 /// real, y lo que le da una fecha a cada paso de la linea de tiempo que ve el
 /// cliente.
 model HistorialEstadoOrden {
-  id             String       @id @default(uuid())
-  ordenId        String
-  orden          OrdenTrabajo @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  id      String       @id @default(uuid())
+  ordenId String
+  orden   OrdenTrabajo @relation(fields: [ordenId], references: [id], onDelete: Cascade)
 
   // Null solo en el primer asiento, el que se crea junto con la orden.
   estadoAnterior EstadoOrden?
@@ -130,50 +166,50 @@ model HistorialEstadoOrden {
 
   // Quien hizo el cambio. Opcional para no perder el historial si algun dia
   // se da de baja al usuario que lo hizo.
-  usuarioId      String?
-  usuario        Usuario?     @relation(fields: [usuarioId], references: [id])
+  usuarioId String?
+  usuario   Usuario? @relation(fields: [usuarioId], references: [id])
 
-  nota           String?
-  createdAt      DateTime     @default(now())
+  nota      String?
+  createdAt DateTime @default(now())
 
   @@index([ordenId, createdAt])
   @@map("historial_estados_orden")
 }
 
 model Diagnostico {
-  id                String       @id @default(uuid())
-  ordenId           String       @unique
-  orden             OrdenTrabajo @relation(fields: [ordenId], references: [id])
-  descripcion       String
-  manoObra          Decimal      @db.Decimal(10, 2)
-  createdAt         DateTime     @default(now())
+  id          String       @id @default(uuid())
+  ordenId     String       @unique
+  orden       OrdenTrabajo @relation(fields: [ordenId], references: [id])
+  descripcion String
+  manoObra    Decimal      @db.Decimal(10, 2)
+  createdAt   DateTime     @default(now())
 
-  itemsCotizacion    ItemCotizacion[]
+  itemsCotizacion ItemCotizacion[]
 
   @@map("diagnosticos")
 }
 
 model ItemCotizacion {
-  id             String       @id @default(uuid())
+  id             String      @id @default(uuid())
   diagnosticoId  String
-  diagnostico    Diagnostico  @relation(fields: [diagnosticoId], references: [id])
+  diagnostico    Diagnostico @relation(fields: [diagnosticoId], references: [id])
   repuestoId     String?
-  repuesto       Repuesto?    @relation(fields: [repuestoId], references: [id])
+  repuesto       Repuesto?   @relation(fields: [repuestoId], references: [id])
   descripcion    String
-  cantidad       Int          @default(1)
-  precioUnitario Decimal      @db.Decimal(10, 2)
+  cantidad       Int         @default(1)
+  precioUnitario Decimal     @db.Decimal(10, 2)
 
   @@map("items_cotizacion")
 }
 
 model Repuesto {
-  id            String            @id @default(uuid())
-  nombre        String
-  codigo        String            @unique
-  stock         Int               @default(0)
-  stockMinimo   Int               @default(5)
-  precio        Decimal           @db.Decimal(10, 2)
-  createdAt     DateTime          @default(now())
+  id          String   @id @default(uuid())
+  nombre      String
+  codigo      String   @unique
+  stock       Int      @default(0)
+  stockMinimo Int      @default(5)
+  precio      Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
 
   itemsCotizacion ItemCotizacion[]
   movimientos     MovimientoInventario[]
@@ -187,26 +223,26 @@ enum TipoMovimiento {
 }
 
 model MovimientoInventario {
-  id           String         @id @default(uuid())
-  repuestoId   String
-  repuesto     Repuesto       @relation(fields: [repuestoId], references: [id])
-  tipo         TipoMovimiento
-  cantidad     Int
-  motivo       String
-  createdAt    DateTime       @default(now())
+  id         String         @id @default(uuid())
+  repuestoId String
+  repuesto   Repuesto       @relation(fields: [repuestoId], references: [id])
+  tipo       TipoMovimiento
+  cantidad   Int
+  motivo     String
+  createdAt  DateTime       @default(now())
 
   @@map("movimientos_inventario")
 }
 
 model Factura {
-  id           String       @id @default(uuid())
-  ordenId      String       @unique
-  orden        OrdenTrabajo @relation(fields: [ordenId], references: [id])
-  numero       String       @unique
-  subtotal     Decimal      @db.Decimal(10, 2)
-  total        Decimal      @db.Decimal(10, 2)
-  metodoPago   String
-  createdAt    DateTime     @default(now())
+  id         String       @id @default(uuid())
+  ordenId    String       @unique
+  orden      OrdenTrabajo @relation(fields: [ordenId], references: [id])
+  numero     String       @unique
+  subtotal   Decimal      @db.Decimal(10, 2)
+  total      Decimal      @db.Decimal(10, 2)
+  metodoPago String
+  createdAt  DateTime     @default(now())
 
   @@map("facturas")
 }
