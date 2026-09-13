@@ -2,6 +2,7 @@ const ordenRepository = require('../repositories/ordenTrabajo.repository');
 const clienteRepository = require('../repositories/cliente.repository');
 const motocicletaRepository = require('../repositories/motocicleta.repository');
 const usuarioRepository = require('../repositories/usuario.repository');
+const notificacionService = require('./notificacion.service');
 const AppError = require('../utils/AppError');
 
 // Máquina de estados: qué transiciones son válidas desde cada estado.
@@ -110,11 +111,19 @@ async function cambiarEstado(id, nuevoEstado, usuarioId, nota) {
     );
   }
 
-  return ordenRepository.cambiarEstado(id, nuevoEstado, {
+  const actualizada = await ordenRepository.cambiarEstado(id, nuevoEstado, {
     usuarioId,
     estadoAnterior: orden.estado,
     nota,
   });
+
+  // El aviso al cliente va DESPUES de que el cambio quedo guardado, y no se
+  // espera. Si el servidor de correo tarda cinco segundos, el recepcionista
+  // no puede quedarse cinco segundos mirando una pantalla bloqueada; y si
+  // falla, la orden igual avanzo.
+  notificacionService.avisarCambioDeEstado(actualizada, orden.estado, nota);
+
+  return actualizada;
 }
 
 async function actualizar(id, datos) {

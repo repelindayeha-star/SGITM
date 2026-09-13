@@ -133,7 +133,7 @@ export default function SeguimientoPublico() {
                   {orden.motocicleta?.marca} {orden.motocicleta?.modelo}
                 </p>
                 <p className="text-taller-400 text-xs font-mono">
-                  {orden.motocicleta?.anio} Â· Recibida el {formatearFecha(orden.fechaRecibido)}
+                  {orden.motocicleta?.anio} · Recibida el {formatearFecha(orden.fechaRecibido)}
                 </p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function SeguimientoPublico() {
         )}
 
         <p className="text-center text-taller-400 text-xs font-mono mt-8">
-          SIGTM Â· Sistema Integral de Gestion - Talleres de Motocicletas
+          SIGTM · Sistema Integral de Gestion - Talleres de Motocicletas
         </p>
       </div>
     </div>

@@ -103,7 +103,7 @@ export default function Usuarios() {
                   >
                     <td className="px-5 py-3.5 text-taller-100 font-medium">
                       {u.nombre}
-                      {esYo && <span className="text-taller-400 text-xs font-normal ml-2">(tÃº)</span>}
+                      {esYo && <span className="text-taller-400 text-xs font-normal ml-2">(tú)</span>}
                     </td>
                     <td className="px-5 py-3.5 text-taller-200 font-mono text-xs">{u.email}</td>
                     <td className="px-5 py-3.5">
@@ -196,7 +196,7 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
           minLength={3}
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          placeholder="AndrÃ©s GÃ³mez"
+          placeholder="Andrés Gómez"
         />
         <Input
           etiqueta="Correo"
@@ -207,13 +207,13 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
           placeholder="mecanico@sigtm.com"
         />
         <Input
-          etiqueta="ContraseÃ±a"
+          etiqueta="Contraseña"
           type="password"
           required
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="MÃ­nimo 8 caracteres"
+          placeholder="Mínimo 8 caracteres"
         />
         <Select etiqueta="Rol" required value={rol} onChange={(e) => setRol(e.target.value)}>
           {ROLES_STAFF.map((r) => (
@@ -224,7 +224,7 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
         </Select>
 
         <p className="text-taller-400 text-xs">
-          Solo cuentas de personal. Los clientes se registran desde el mÃ³dulo de clientes,
+          Solo cuentas de personal. Los clientes se registran desde el módulo de clientes,
           junto con su perfil y sus motocicletas.
         </p>
 

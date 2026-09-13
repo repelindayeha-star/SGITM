@@ -41,6 +41,14 @@ jobs:
       - name: Validar el esquema de datos
         run: npx prisma validate
 
+      # Los acentos se corrompen en silencio cuando un archivo UTF-8 pasa por
+      # una herramienta de Windows que asume otra pagina de codigos: una vocal
+      # con tilde se convierte en dos caracteres raros. No rompe la
+      # compilacion, no da error, y se descubre cuando el jurado lo ve en
+      # pantalla.
+      - name: Comprobar que no haya acentos corrompidos
+        run: npm run comprobar:acentos
+
   cliente:
     name: Cliente - compilacion
     runs-on: ubuntu-latest

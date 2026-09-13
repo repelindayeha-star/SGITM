@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const ETIQUETAS_ROL = {
   ADMINISTRADOR: 'Administrador',
   RECEPCIONISTA: 'Recepcionista',
-  MECANICO: 'MecÃ¡nico',
+  MECANICO: 'Mecánico',
   CLIENTE: 'Cliente',
 };
 

@@ -6,7 +6,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "test": "node --test \"pruebas/unidad/*.test.js\"",
-    "test:integracion": "node pruebas/integracion/recuperacion.js",
+    "comprobar:acentos": "node herramientas/revisar-encoding.js",
+    "test:integracion": "node pruebas/integracion/recuperacion.js && node pruebas/integracion/avisoCambioEstado.js",
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset --force"
   },

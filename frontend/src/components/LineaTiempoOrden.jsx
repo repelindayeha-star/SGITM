@@ -28,7 +28,7 @@ export default function LineaTiempoOrden({ estado, historial = [], mostrarAutor 
           {asiento && (
             <p className="text-taller-400 text-[11px] font-mono mt-0.5">
               {formatearFechaHora(asiento.createdAt)}
-              {mostrarAutor && asiento.usuario ? ` Â· ${asiento.usuario.nombre}` : ''}
+              {mostrarAutor && asiento.usuario ? ` · ${asiento.usuario.nombre}` : ''}
             </p>
           )}
         </div>
@@ -92,7 +92,7 @@ export default function LineaTiempoOrden({ estado, historial = [], mostrarAutor 
               {asiento && (
                 <p className="text-taller-400 text-[11px] font-mono mt-1">
                   {formatearFechaHora(asiento.createdAt)}
-                  {mostrarAutor && asiento.usuario ? ` Â· ${asiento.usuario.nombre}` : ''}
+                  {mostrarAutor && asiento.usuario ? ` · ${asiento.usuario.nombre}` : ''}
                 </p>
               )}
             </div>

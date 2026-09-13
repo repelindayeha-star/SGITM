@@ -93,22 +93,45 @@ function verificacionEmail({ nombre, enlace }) {
   };
 }
 
-function cambioEstadoOrden({ nombre, codigo, paso, descripcion, enlace }) {
+function cambioEstadoOrden({ nombre, codigo, moto, paso, descripcion, enlace }) {
+  const deMoto = moto ? ` (${moto})` : '';
   return {
-    asunto: `Tu orden ${codigo}: ${paso} - SIGTM`,
+    asunto: `${paso} - orden ${codigo} - SIGTM`,
     html: envoltura({
-      titulo: `Tu orden avanzo: ${paso}`,
+      titulo: paso,
       cuerpo:
         parrafo(`Hola ${nombre},`) +
-        parrafo(`Tu orden <strong style="color:${AMBAR};">${codigo}</strong> paso a la etapa <strong>${paso}</strong>.`) +
+        parrafo(
+          `Tu orden <strong style="color:${AMBAR};">${codigo}</strong>${deMoto} cambio de etapa.`
+        ) +
         parrafo(descripcion) +
         boton(enlace, 'Ver el estado de mi moto') +
-        nota('Puedes consultar el avance en cualquier momento con el codigo de tu orden.'),
+        nota('No necesitas cuenta ni contrasena: el enlace lleva tu codigo de orden.'),
     }),
     texto:
-      `Hola ${nombre}.\n\nTu orden ${codigo} paso a la etapa ${paso}.\n${descripcion}\n\n` +
+      `Hola ${nombre}.\n\nTu orden ${codigo}${deMoto}: ${paso}.\n${descripcion}\n\n` +
       `Consulta el avance en:\n${enlace}`,
   };
 }
 
-module.exports = { recuperacionPassword, verificacionEmail, cambioEstadoOrden };
+function ordenCancelada({ nombre, codigo, moto, motivo, enlace }) {
+  const deMoto = moto ? ` (${moto})` : '';
+  return {
+    asunto: `Orden ${codigo} cancelada - SIGTM`,
+    html: envoltura({
+      titulo: 'Se cancelo la orden',
+      cuerpo:
+        parrafo(`Hola ${nombre},`) +
+        parrafo(`La orden <strong style="color:${AMBAR};">${codigo}</strong>${deMoto} se cancelo.`) +
+        (motivo ? parrafo(`Motivo registrado: ${motivo}`) : '') +
+        boton(enlace, 'Ver el detalle') +
+        nota('Si esto no es lo que esperabas, comunicate con el taller.'),
+    }),
+    texto:
+      `Hola ${nombre}.\n\nLa orden ${codigo}${deMoto} se cancelo.` +
+      (motivo ? `\nMotivo: ${motivo}` : '') +
+      `\n\nDetalle en:\n${enlace}`,
+  };
+}
+
+module.exports = { recuperacionPassword, verificacionEmail, cambioEstadoOrden, ordenCancelada };
