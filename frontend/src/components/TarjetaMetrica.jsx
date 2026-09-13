@@ -14,10 +14,10 @@ export default function TarjetaMetrica({ icono: Icono, etiqueta, valor, acento =
             acento ? 'bg-ambar-400/15' : 'bg-taller-800'
           }`}
         >
-          <Icono className={`w-4.5 h-4.5 ${acento ? 'text-ambar-400' : 'text-taller-600'}`} strokeWidth={1.75} />
+          <Icono className={`w-4.5 h-4.5 ${acento ? 'text-ambar-400' : 'text-taller-400'}`} strokeWidth={1.75} />
         </div>
       </div>
-      <p className="text-taller-600 text-xs font-mono uppercase tracking-wide mb-1">{etiqueta}</p>
+      <p className="text-taller-400 text-xs font-mono uppercase tracking-wide mb-1">{etiqueta}</p>
       <p className="text-taller-100 text-2xl font-semibold font-display">{valor}</p>
     </>
   );

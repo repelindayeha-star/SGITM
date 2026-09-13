@@ -46,7 +46,7 @@ export default function ClienteFormulario() {
     <Layout>
       <Link
         to="/clientes"
-        className="inline-flex items-center gap-1.5 text-taller-600 hover:text-ambar-400 text-sm mb-5 transition-colors"
+        className="inline-flex items-center gap-1.5 text-taller-400 hover:text-ambar-400 text-sm mb-5 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver a clientes
@@ -55,7 +55,7 @@ export default function ClienteFormulario() {
       <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide mb-1">
         Nuevo cliente
       </h1>
-      <p className="text-taller-600 text-sm mb-7">
+      <p className="text-taller-400 text-sm mb-7">
         Se creara una cuenta de acceso y el perfil de cliente asociado.
       </p>
 

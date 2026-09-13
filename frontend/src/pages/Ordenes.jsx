@@ -58,11 +58,11 @@ export default function Ordenes() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Codigo</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Cliente</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Motocicleta</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Mecanico</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Estado</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Codigo</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicleta</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Mecanico</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -86,11 +86,11 @@ export default function Ordenes() {
                   <td className="px-5 py-3.5 text-taller-200 text-xs">
                     {orden.mecanico ? (
                       <span className="flex items-center gap-1.5">
-                        <Wrench className="w-3.5 h-3.5 text-taller-600" />
+                        <Wrench className="w-3.5 h-3.5 text-taller-400" />
                         {orden.mecanico.nombre}
                       </span>
                     ) : (
-                      <span className="text-taller-700">Sin asignar</span>
+                      <span className="text-taller-400">Sin asignar</span>
                     )}
                   </td>
                   <td className="px-5 py-3.5">

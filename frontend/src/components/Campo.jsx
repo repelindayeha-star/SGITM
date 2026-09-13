@@ -1,7 +1,7 @@
 // Campo de formulario consistente: label + input/select/textarea con el mismo
 // tratamiento visual en todo el sistema (fondo taller-900, foco ambar).
 const clasesInput =
-  'w-full bg-taller-900 border border-taller-700 rounded-md px-3 py-2.5 text-taller-100 placeholder-taller-600 text-sm outline-none focus:border-ambar-400 focus:ring-1 focus:ring-ambar-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+  'w-full bg-taller-900 border border-taller-700 rounded-md px-3 py-2.5 text-taller-100 placeholder-taller-400 text-sm outline-none focus:border-ambar-400 focus:ring-1 focus:ring-ambar-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
 
 export function Etiqueta({ children }) {
   return (

@@ -68,10 +68,10 @@ export default function Inventario() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Repuesto</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Codigo</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Precio</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Stock</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Repuesto</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Codigo</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Precio</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Stock</th>
                 {puedeMovimiento && <th className="px-5 py-3" />}
               </tr>
             </thead>
@@ -93,7 +93,7 @@ export default function Inventario() {
                       <td className="px-5 py-3.5 text-right">
                         <button
                           onClick={() => setModalMovimiento(r)}
-                          className="text-taller-600 hover:text-ambar-400 text-xs font-medium transition-colors"
+                          className="text-taller-400 hover:text-ambar-400 text-xs font-medium transition-colors"
                         >
                           Registrar movimiento
                         </button>
@@ -218,7 +218,7 @@ function ModalMovimiento({ repuesto, onCerrar, onRegistrado }) {
     <Modal abierto={!!repuesto} onCerrar={onCerrar} titulo={`Movimiento - ${repuesto?.nombre ?? ''}`} ancho="max-w-sm">
       <form onSubmit={manejarSubmit} className="space-y-4">
         {error && <p className="text-red-400 text-xs">{error}</p>}
-        <p className="text-taller-600 text-xs">
+        <p className="text-taller-400 text-xs">
           Stock actual: <span className="text-taller-200 font-mono">{repuesto?.stock}</span>
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -228,7 +228,7 @@ function ModalMovimiento({ repuesto, onCerrar, onRegistrado }) {
             className={`flex items-center justify-center gap-1.5 rounded-md py-2 text-xs font-semibold border transition-colors ${
               tipo === 'ENTRADA'
                 ? 'bg-green-900/30 border-green-700 text-green-400'
-                : 'border-taller-700 text-taller-600 hover:bg-taller-800'
+                : 'border-taller-700 text-taller-400 hover:bg-taller-800'
             }`}
           >
             <ArrowDownCircle className="w-3.5 h-3.5" />
@@ -240,7 +240,7 @@ function ModalMovimiento({ repuesto, onCerrar, onRegistrado }) {
             className={`flex items-center justify-center gap-1.5 rounded-md py-2 text-xs font-semibold border transition-colors ${
               tipo === 'SALIDA'
                 ? 'bg-red-900/30 border-red-700 text-red-400'
-                : 'border-taller-700 text-taller-600 hover:bg-taller-800'
+                : 'border-taller-700 text-taller-400 hover:bg-taller-800'
             }`}
           >
             <ArrowUpCircle className="w-3.5 h-3.5" />

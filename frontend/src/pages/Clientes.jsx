@@ -65,10 +65,10 @@ export default function Clientes() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Nombre</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Correo</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Telefono</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Motocicletas</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Telefono</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicletas</th>
               </tr>
             </thead>
             <tbody>

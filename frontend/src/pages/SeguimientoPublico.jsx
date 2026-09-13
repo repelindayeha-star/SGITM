@@ -80,7 +80,7 @@ export default function SeguimientoPublico() {
           <h1 className="font-display text-2xl font-semibold text-taller-100 tracking-wide uppercase">
             Estado de tu moto
           </h1>
-          <p className="text-taller-600 text-xs font-mono mt-1 tracking-wider">
+          <p className="text-taller-400 text-xs font-mono mt-1 tracking-wider">
             CONSULTA CON EL CODIGO DE TU ORDEN
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function SeguimientoPublico() {
             onChange={(e) => setCodigo(e.target.value)}
             placeholder="OT-2026-XXXXXX"
             aria-label="Codigo de la orden"
-            className="flex-1 bg-taller-850 border border-taller-700 rounded-md px-3 py-2.5 text-taller-100 placeholder-taller-600 text-sm font-mono uppercase outline-none focus:border-ambar-400 focus:ring-1 focus:ring-ambar-400 transition-colors"
+            className="flex-1 bg-taller-850 border border-taller-700 rounded-md px-3 py-2.5 text-taller-100 placeholder-taller-400 text-sm font-mono uppercase outline-none focus:border-ambar-400 focus:ring-1 focus:ring-ambar-400 transition-colors"
           />
           <button
             type="submit"
@@ -132,8 +132,8 @@ export default function SeguimientoPublico() {
                 <p className="text-taller-100 text-sm font-medium">
                   {orden.motocicleta?.marca} {orden.motocicleta?.modelo}
                 </p>
-                <p className="text-taller-600 text-xs font-mono">
-                  {orden.motocicleta?.anio} · Recibida el {formatearFecha(orden.fechaRecibido)}
+                <p className="text-taller-400 text-xs font-mono">
+                  {orden.motocicleta?.anio} Â· Recibida el {formatearFecha(orden.fechaRecibido)}
                 </p>
               </div>
             </div>
@@ -146,8 +146,8 @@ export default function SeguimientoPublico() {
           </div>
         )}
 
-        <p className="text-center text-taller-700 text-xs font-mono mt-8">
-          SIGTM · Sistema Integral de Gestion - Talleres de Motocicletas
+        <p className="text-center text-taller-400 text-xs font-mono mt-8">
+          SIGTM Â· Sistema Integral de Gestion - Talleres de Motocicletas
         </p>
       </div>
     </div>

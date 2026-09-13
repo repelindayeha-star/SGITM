@@ -93,7 +93,7 @@ export default function Citas() {
 
               <p className="text-taller-100 text-sm mb-3">{cita.motivo}</p>
 
-              <div className="flex items-center gap-4 text-xs text-taller-600 border-t border-taller-700 pt-3 mb-3">
+              <div className="flex items-center gap-4 text-xs text-taller-400 border-t border-taller-700 pt-3 mb-3">
                 <span className="flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5" />
                   {cita.cliente?.usuario?.nombre ?? '-'}

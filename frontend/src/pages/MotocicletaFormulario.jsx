@@ -55,7 +55,7 @@ export default function MotocicletaFormulario() {
     <Layout>
       <Link
         to="/motocicletas"
-        className="inline-flex items-center gap-1.5 text-taller-600 hover:text-ambar-400 text-sm mb-5 transition-colors"
+        className="inline-flex items-center gap-1.5 text-taller-400 hover:text-ambar-400 text-sm mb-5 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver a motocicletas
@@ -64,7 +64,7 @@ export default function MotocicletaFormulario() {
       <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide mb-1">
         Nueva motocicleta
       </h1>
-      <p className="text-taller-600 text-sm mb-7">Registra una motocicleta asociada a un cliente.</p>
+      <p className="text-taller-400 text-sm mb-7">Registra una motocicleta asociada a un cliente.</p>
 
       {cargandoClientes ? (
         <CargandoInline>Cargando clientes...</CargandoInline>

@@ -26,9 +26,9 @@ export default function LineaTiempoOrden({ estado, historial = [], mostrarAutor 
         <div className="min-w-0">
           <p className="text-red-300 text-sm font-medium">Orden cancelada</p>
           {asiento && (
-            <p className="text-taller-600 text-[11px] font-mono mt-0.5">
+            <p className="text-taller-400 text-[11px] font-mono mt-0.5">
               {formatearFechaHora(asiento.createdAt)}
-              {mostrarAutor && asiento.usuario ? ` · ${asiento.usuario.nombre}` : ''}
+              {mostrarAutor && asiento.usuario ? ` Â· ${asiento.usuario.nombre}` : ''}
             </p>
           )}
         </div>
@@ -80,7 +80,7 @@ export default function LineaTiempoOrden({ estado, historial = [], mostrarAutor 
             </span>
 
             <div className="min-w-0 pt-0.5">
-              <p className={`text-sm font-medium ${alcanzado ? 'text-taller-100' : 'text-taller-600'}`}>
+              <p className={`text-sm font-medium ${alcanzado ? 'text-taller-100' : 'text-taller-400'}`}>
                 {paso.titulo}
                 {actual && (
                   <span className="ml-2 text-ambar-400 text-[10px] font-mono uppercase tracking-wider">
@@ -88,11 +88,11 @@ export default function LineaTiempoOrden({ estado, historial = [], mostrarAutor 
                   </span>
                 )}
               </p>
-              <p className="text-taller-600 text-xs mt-0.5">{paso.detalle}</p>
+              <p className="text-taller-400 text-xs mt-0.5">{paso.detalle}</p>
               {asiento && (
-                <p className="text-taller-600 text-[11px] font-mono mt-1">
+                <p className="text-taller-400 text-[11px] font-mono mt-1">
                   {formatearFechaHora(asiento.createdAt)}
-                  {mostrarAutor && asiento.usuario ? ` · ${asiento.usuario.nombre}` : ''}
+                  {mostrarAutor && asiento.usuario ? ` Â· ${asiento.usuario.nombre}` : ''}
                 </p>
               )}
             </div>

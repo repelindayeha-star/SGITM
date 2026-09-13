@@ -85,11 +85,11 @@ export default function Usuarios() {
           <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Nombre</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Correo</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Rol</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Estado</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Alta</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Rol</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Alta</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
@@ -103,7 +103,7 @@ export default function Usuarios() {
                   >
                     <td className="px-5 py-3.5 text-taller-100 font-medium">
                       {u.nombre}
-                      {esYo && <span className="text-taller-600 text-xs font-normal ml-2">(tú)</span>}
+                      {esYo && <span className="text-taller-400 text-xs font-normal ml-2">(tÃº)</span>}
                     </td>
                     <td className="px-5 py-3.5 text-taller-200 font-mono text-xs">{u.email}</td>
                     <td className="px-5 py-3.5">
@@ -114,7 +114,7 @@ export default function Usuarios() {
                         {u.activo ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-taller-600 text-xs font-mono">
+                    <td className="px-5 py-3.5 text-taller-400 text-xs font-mono">
                       {formatearFecha(u.createdAt)}
                     </td>
                     <td className="px-5 py-3.5 text-right">
@@ -196,7 +196,7 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
           minLength={3}
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          placeholder="Andrés Gómez"
+          placeholder="AndrÃ©s GÃ³mez"
         />
         <Input
           etiqueta="Correo"
@@ -207,13 +207,13 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
           placeholder="mecanico@sigtm.com"
         />
         <Input
-          etiqueta="Contraseña"
+          etiqueta="ContraseÃ±a"
           type="password"
           required
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mínimo 8 caracteres"
+          placeholder="MÃ­nimo 8 caracteres"
         />
         <Select etiqueta="Rol" required value={rol} onChange={(e) => setRol(e.target.value)}>
           {ROLES_STAFF.map((r) => (
@@ -223,8 +223,8 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
           ))}
         </Select>
 
-        <p className="text-taller-600 text-xs">
-          Solo cuentas de personal. Los clientes se registran desde el módulo de clientes,
+        <p className="text-taller-400 text-xs">
+          Solo cuentas de personal. Los clientes se registran desde el mÃ³dulo de clientes,
           junto con su perfil y sus motocicletas.
         </p>
 

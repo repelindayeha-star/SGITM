@@ -55,7 +55,7 @@ export default function PortalCliente() {
           <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide">
             Mi taller
           </h1>
-          <p className="text-taller-600 text-sm mt-1">Tus motocicletas, ordenes y citas en un solo lugar.</p>
+          <p className="text-taller-400 text-sm mt-1">Tus motocicletas, ordenes y citas en un solo lugar.</p>
         </div>
 
         {cargando && <CargandoInline>Cargando tu informacion...</CargandoInline>}
@@ -84,7 +84,7 @@ export default function PortalCliente() {
                       <p className="text-taller-100 font-semibold font-display text-lg uppercase">
                         {m.marca} {m.modelo}
                       </p>
-                      <p className="text-taller-600 text-xs font-mono">
+                      <p className="text-taller-400 text-xs font-mono">
                         {m.placa} - {m.anio} {m.color ? `- ${m.color}` : ''}
                       </p>
                     </div>
@@ -117,7 +117,7 @@ export default function PortalCliente() {
                           <EstadoBadge estado={orden.estado} />
                         </div>
                         <p className="text-taller-200 text-sm mb-2">{orden.descripcionProblema}</p>
-                        <p className="text-taller-600 text-xs font-mono mb-4">{orden.motocicleta?.placa}</p>
+                        <p className="text-taller-400 text-xs font-mono mb-4">{orden.motocicleta?.placa}</p>
 
                         <LineaTiempoOrden
                           estado={orden.estado}
@@ -126,7 +126,7 @@ export default function PortalCliente() {
 
                         {orden.diagnostico && (
                           <div className="border-t border-taller-700 pt-3 text-xs">
-                            <p className="text-taller-600 mb-1">{orden.diagnostico.descripcion}</p>
+                            <p className="text-taller-400 mb-1">{orden.diagnostico.descripcion}</p>
                             {totalCotizacion !== null && (
                               <p className="text-ambar-400 font-mono">
                                 Cotizacion estimada: {formatearMoneda(totalCotizacion)}
@@ -137,7 +137,7 @@ export default function PortalCliente() {
 
                         {orden.factura && (
                           <div className="border-t border-taller-700 pt-3 mt-3 flex items-center justify-between text-xs">
-                            <span className="text-taller-600 font-mono">{orden.factura.numero}</span>
+                            <span className="text-taller-400 font-mono">{orden.factura.numero}</span>
                             <span className="text-taller-100 font-semibold font-mono">
                               {formatearMoneda(orden.factura.total)}
                             </span>
@@ -176,7 +176,7 @@ export default function PortalCliente() {
                     >
                       <div>
                         <p className="text-taller-100 text-sm font-mono">{formatearFechaHora(cita.fechaHora)}</p>
-                        <p className="text-taller-600 text-xs">{cita.motivo}</p>
+                        <p className="text-taller-400 text-xs">{cita.motivo}</p>
                       </div>
                       <EstadoBadge estado={cita.estado} />
                     </div>

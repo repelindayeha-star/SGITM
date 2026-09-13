@@ -21,7 +21,7 @@ export default function NoAutorizado() {
         <h1 className="font-display text-xl font-semibold text-taller-100 uppercase tracking-wide mb-2">
           Acceso no autorizado
         </h1>
-        <p className="text-taller-600 text-sm mb-6">
+        <p className="text-taller-400 text-sm mb-6">
           Tu rol no tiene permisos para ver esta seccion del sistema.
         </p>
         <Link

@@ -15,7 +15,7 @@ export default function Modal({ abierto, onCerrar, titulo, children, ancho = 'ma
           <h2 className="text-taller-100 font-semibold text-sm uppercase tracking-wide">{titulo}</h2>
           <button
             onClick={onCerrar}
-            className="text-taller-600 hover:text-ambar-400 transition-colors"
+            className="text-taller-400 hover:text-ambar-400 transition-colors"
             aria-label="Cerrar"
           >
             <X className="w-4 h-4" />

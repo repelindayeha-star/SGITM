@@ -77,12 +77,12 @@ export default function Motocicletas() {
               <p className="text-taller-100 font-semibold font-display text-lg uppercase">
                 {moto.marca} {moto.modelo}
               </p>
-              <p className="text-taller-600 text-xs font-mono mb-3">
+              <p className="text-taller-400 text-xs font-mono mb-3">
                 {moto.anio} {moto.color ? `- ${moto.color}` : ''}
               </p>
 
               <div className="flex items-center gap-1.5 text-taller-200 text-xs pt-3 border-t border-taller-700">
-                <User className="w-3.5 h-3.5 text-taller-600" />
+                <User className="w-3.5 h-3.5 text-taller-400" />
                 {moto.cliente?.usuario?.nombre ?? 'Sin cliente'}
               </div>
             </div>

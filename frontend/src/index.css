@@ -7,6 +7,11 @@
   --color-taller-800: #2C2C2A;
   --color-taller-700: #444441;
   --color-taller-600: #5F5E5A;
+  /* Gris de apoyo para TEXTO. Sobre taller-900 da 6,04:1, por encima del
+     minimo de 4,5:1 que pide la norma de accesibilidad. El taller-600 da
+     2,69:1 y no llega: se reserva para bordes, puntos y adornos, donde el
+     contraste no se mide porque no hay nada que leer. (hallazgo ACC-01) */
+  --color-taller-400: #9A9891;
   --color-taller-200: #D3D1C7;
   --color-taller-100: #F1EFE8;
 

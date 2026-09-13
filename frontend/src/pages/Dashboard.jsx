@@ -57,7 +57,7 @@ export default function Dashboard() {
         <h1 className="font-display text-2xl font-semibold text-taller-100 uppercase tracking-wide">
           Panel general
         </h1>
-        <p className="text-taller-600 text-sm mt-1">
+        <p className="text-taller-400 text-sm mt-1">
           {usuario?.rol === 'ADMINISTRADOR'
             ? 'Vision ejecutiva del taller: clientes, inventario e ingresos.'
             : 'Resumen operativo del taller en tiempo real.'}
@@ -132,7 +132,7 @@ export default function Dashboard() {
               </h2>
 
               {resumen.ordenesPorEstado.length === 0 ? (
-                <p className="text-taller-600 text-sm">No hay ordenes registradas todavia.</p>
+                <p className="text-taller-400 text-sm">No hay ordenes registradas todavia.</p>
               ) : (
                 <div className="space-y-2.5">
                   {resumen.ordenesPorEstado.map((item) => {

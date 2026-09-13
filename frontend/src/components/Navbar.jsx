@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const ETIQUETAS_ROL = {
   ADMINISTRADOR: 'Administrador',
   RECEPCIONISTA: 'Recepcionista',
-  MECANICO: 'Mecánico',
+  MECANICO: 'MecÃ¡nico',
   CLIENTE: 'Cliente',
 };
 
@@ -29,7 +29,7 @@ export default function Navbar() {
             <p className="font-display text-taller-100 text-sm font-semibold tracking-wide uppercase leading-none">
               SIGTM
             </p>
-            <p className="text-taller-600 text-[11px] font-mono mt-0.5">Panel de control</p>
+            <p className="text-taller-400 text-[11px] font-mono mt-0.5">Panel de control</p>
           </div>
         </div>
 
@@ -42,7 +42,7 @@ export default function Navbar() {
           </div>
           <button
             onClick={manejarCerrarSesion}
-            className="flex items-center gap-1.5 text-taller-600 hover:text-ambar-400 border border-taller-700 hover:border-ambar-400/50 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 text-taller-400 hover:text-ambar-400 border border-taller-700 hover:border-ambar-400/50 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             Salir

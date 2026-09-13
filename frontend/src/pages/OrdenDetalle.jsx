@@ -99,7 +99,7 @@ export default function OrdenDetalle() {
     <Layout>
       <Link
         to="/ordenes"
-        className="inline-flex items-center gap-1.5 text-taller-600 hover:text-ambar-400 text-sm mb-5 transition-colors"
+        className="inline-flex items-center gap-1.5 text-taller-400 hover:text-ambar-400 text-sm mb-5 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver a ordenes
@@ -115,7 +115,7 @@ export default function OrdenDetalle() {
             </h1>
             <EstadoBadge estado={orden.estado} />
           </div>
-          <p className="text-taller-600 text-sm">{orden.descripcionProblema}</p>
+          <p className="text-taller-400 text-sm">{orden.descripcionProblema}</p>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export default function OrdenDetalle() {
           />
           {/* El enlace que se le entrega al cliente (o se imprime como QR).
               Es publico a proposito: solo muestra el avance, nada mas. */}
-          <p className="text-taller-600 text-[11px] font-mono mt-4 pt-3 border-t border-taller-700 break-all">
+          <p className="text-taller-400 text-[11px] font-mono mt-4 pt-3 border-t border-taller-700 break-all">
             Seguimiento del cliente: {`${window.location.origin}/seguimiento/${orden.codigo}`}
           </p>
         </Panel>
@@ -168,7 +168,7 @@ export default function OrdenDetalle() {
 function InfoTarjeta({ icono: Icono, etiqueta, valor }) {
   return (
     <div className="relative bg-taller-850 border border-taller-700 rounded-xl p-4">
-      <div className="flex items-center gap-2 text-taller-600 text-xs font-mono uppercase tracking-wide mb-1.5">
+      <div className="flex items-center gap-2 text-taller-400 text-xs font-mono uppercase tracking-wide mb-1.5">
         <Icono className="w-3.5 h-3.5" />
         {etiqueta}
       </div>
@@ -214,16 +214,16 @@ function PanelEstado({ orden, usuario, onActualizado }) {
 
   return (
     <Panel titulo="Estado de la orden">
-      <p className="text-taller-600 text-xs mb-3">
+      <p className="text-taller-400 text-xs mb-3">
         Estado actual: <span className="text-taller-200 font-medium">{ETIQUETAS_ESTADO_ORDEN[orden.estado]}</span>
       </p>
 
       {!puedeCambiar && (
-        <p className="text-taller-700 text-xs italic">No tienes permisos para cambiar el estado.</p>
+        <p className="text-taller-400 text-xs italic">No tienes permisos para cambiar el estado.</p>
       )}
 
       {puedeCambiar && opciones.length === 0 && (
-        <p className="text-taller-700 text-xs italic">Este es un estado final, no admite mas cambios.</p>
+        <p className="text-taller-400 text-xs italic">Este es un estado final, no admite mas cambios.</p>
       )}
 
       {puedeCambiar && opciones.length > 0 && (
@@ -291,12 +291,12 @@ function PanelMecanico({ orden, usuario, onActualizado }) {
 
   return (
     <Panel titulo="Mecanico asignado">
-      <p className="text-taller-600 text-xs mb-3">
+      <p className="text-taller-400 text-xs mb-3">
         Actual: <span className="text-taller-200 font-medium">{orden.mecanico?.nombre ?? 'Sin asignar'}</span>
       </p>
 
       {!puedeAsignar && (
-        <p className="text-taller-700 text-xs italic">No tienes permisos para asignar mecanicos.</p>
+        <p className="text-taller-400 text-xs italic">No tienes permisos para asignar mecanicos.</p>
       )}
 
       {puedeAsignar && (
@@ -424,13 +424,13 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
       {errorLocal && <p className="text-red-400 text-xs mb-3">{errorLocal}</p>}
 
       {!diagnostico && orden.estado !== 'EN_DIAGNOSTICO' && (
-        <p className="text-taller-600 text-sm">
+        <p className="text-taller-400 text-sm">
           Aun no hay diagnostico. La orden debe estar en estado <strong>EN_DIAGNOSTICO</strong> para poder registrarlo.
         </p>
       )}
 
       {!diagnostico && orden.estado === 'EN_DIAGNOSTICO' && !puedeGestionar && (
-        <p className="text-taller-600 text-sm">Esta orden aun no tiene un diagnostico registrado.</p>
+        <p className="text-taller-400 text-sm">Esta orden aun no tiene un diagnostico registrado.</p>
       )}
 
       {!diagnostico && orden.estado === 'EN_DIAGNOSTICO' && puedeGestionar && (
@@ -471,10 +471,10 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-taller-700 text-left bg-taller-900/40">
-                  <th className="px-4 py-2.5 text-taller-600 font-medium text-xs uppercase tracking-wide">Item</th>
-                  <th className="px-4 py-2.5 text-taller-600 font-medium text-xs uppercase tracking-wide">Cant.</th>
-                  <th className="px-4 py-2.5 text-taller-600 font-medium text-xs uppercase tracking-wide">Precio unit.</th>
-                  <th className="px-4 py-2.5 text-taller-600 font-medium text-xs uppercase tracking-wide">Subtotal</th>
+                  <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Item</th>
+                  <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Cant.</th>
+                  <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Precio unit.</th>
+                  <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Subtotal</th>
                   {puedeGestionar && <th className="px-4 py-2.5" />}
                 </tr>
               </thead>
@@ -491,7 +491,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => manejarEliminarItem(item.id)}
-                          className="text-taller-600 hover:text-red-400 transition-colors"
+                          className="text-taller-400 hover:text-red-400 transition-colors"
                           aria-label="Eliminar item"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -502,7 +502,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                 ))}
                 {(diagnostico.itemsCotizacion || []).length === 0 && (
                   <tr>
-                    <td colSpan={puedeGestionar ? 5 : 4} className="px-4 py-4 text-taller-700 text-xs text-center">
+                    <td colSpan={puedeGestionar ? 5 : 4} className="px-4 py-4 text-taller-400 text-xs text-center">
                       Sin items de cotizacion todavia.
                     </td>
                   </tr>
@@ -513,7 +513,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
 
           {totalCotizacion && (
             <div className="flex items-center justify-end gap-6 text-sm mb-4">
-              <span className="text-taller-600">
+              <span className="text-taller-400">
                 Mano de obra: <span className="text-taller-200 font-mono">{formatearMoneda(totalCotizacion.manoObra)}</span>
               </span>
               <span className="text-taller-100 font-semibold">
@@ -582,7 +582,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                 <button
                   type="button"
                   onClick={() => setMostrarFormItem(false)}
-                  className="text-taller-600 hover:text-taller-200 text-sm transition-colors"
+                  className="text-taller-400 hover:text-taller-200 text-sm transition-colors"
                 >
                   Cancelar
                 </button>
@@ -627,7 +627,7 @@ function PanelFactura({ orden, diagnostico, factura, usuario, onActualizado }) {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <p className="text-taller-100 font-mono text-sm">{factura.numero}</p>
-            <p className="text-taller-600 text-xs">{factura.metodoPago}</p>
+            <p className="text-taller-400 text-xs">{factura.metodoPago}</p>
           </div>
           <p className="text-ambar-400 font-display text-xl font-semibold">{formatearMoneda(factura.total)}</p>
         </div>
@@ -640,7 +640,7 @@ function PanelFactura({ orden, diagnostico, factura, usuario, onActualizado }) {
           Generar factura
         </button>
       ) : (
-        <p className="text-taller-700 text-xs italic">
+        <p className="text-taller-400 text-xs italic">
           {diagnostico
             ? 'La factura se puede generar cuando la orden este en estado LISTA o ENTREGADA.'
             : 'Se necesita un diagnostico con cotizacion antes de facturar.'}

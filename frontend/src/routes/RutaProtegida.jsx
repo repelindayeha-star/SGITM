@@ -7,7 +7,7 @@ export default function RutaProtegida({ children, rolesPermitidos }) {
 
   if (cargando) {
     return (
-      <div className="flex h-screen items-center justify-center bg-taller-900 gap-2 text-taller-600 text-sm">
+      <div className="flex h-screen items-center justify-center bg-taller-900 gap-2 text-taller-400 text-sm">
         <LoaderCircle className="w-4 h-4 animate-spin" />
         Cargando...
       </div>

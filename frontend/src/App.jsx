@@ -3,6 +3,9 @@ import { AuthProvider } from './context/AuthContext';
 import RutaProtegida from './routes/RutaProtegida';
 
 import Login from './pages/Login';
+import RecuperarPassword from './pages/RecuperarPassword';
+import RestablecerPassword from './pages/RestablecerPassword';
+import VerificarCorreo from './pages/VerificarCorreo';
 import NoAutorizado from './pages/NoAutorizado';
 import Dashboard from './pages/Dashboard';
 import PortalCliente from './pages/PortalCliente';
@@ -33,6 +36,12 @@ function App() {
           {/* Publicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/no-autorizado" element={<NoAutorizado />} />
+
+          {/* Recuperacion de contrasena y confirmacion de correo.
+              Son publicas por necesidad: quien llega aqui no puede entrar. */}
+          <Route path="/recuperar-password" element={<RecuperarPassword />} />
+          <Route path="/restablecer-password" element={<RestablecerPassword />} />
+          <Route path="/verificar-correo" element={<VerificarCorreo />} />
 
           {/* Seguimiento por codigo/QR: sin sesion, cualquiera con el codigo.
               Dos rutas para que funcione escrito a mano o escaneado. */}

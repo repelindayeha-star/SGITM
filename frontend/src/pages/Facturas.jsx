@@ -46,12 +46,12 @@ export default function Facturas() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Numero</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Orden</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Cliente</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Metodo de pago</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide">Fecha</th>
-                <th className="px-5 py-3 text-taller-600 font-medium text-xs uppercase tracking-wide text-right">Total</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Numero</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Orden</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Metodo de pago</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Fecha</th>
+                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide text-right">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -67,7 +67,7 @@ export default function Facturas() {
                   <td className="px-5 py-3.5">
                     <Badge variante="neutro">{f.metodoPago}</Badge>
                   </td>
-                  <td className="px-5 py-3.5 text-taller-600 text-xs">{formatearFecha(f.createdAt)}</td>
+                  <td className="px-5 py-3.5 text-taller-400 text-xs">{formatearFecha(f.createdAt)}</td>
                   <td className="px-5 py-3.5 text-right text-taller-100 font-semibold font-mono">
                     {formatearMoneda(f.total)}
                   </td>
