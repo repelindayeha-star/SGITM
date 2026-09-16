@@ -12,8 +12,6 @@ uploads/*
 
 frontend/dist/
 
-tmp-reportes/
-
 # Salidas temporales de informes y de la aplicacion de escritorio
 tmp-reportes/
 Claude outputs/
