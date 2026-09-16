@@ -7,6 +7,7 @@
 // falta sin duplicar nada:  npm run db:seed
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
+const { sembrarDemo } = require('./semillaDemo');
 
 const prisma = new PrismaClient();
 
@@ -19,9 +20,18 @@ const PASSWORD_DEMO = 'Sigtm2026*';
 async function crearUsuario({ nombre, email, rol }) {
   const password = await bcrypt.hash(PASSWORD_DEMO, SALT_ROUNDS);
 
+  // La contrasena tambien se restaura al actualizar, no solo al crear.
+  //
+  // Antes no era asi, y el resultado fue este: cuatro de las seis cuentas de
+  // demostracion tenian una contrasena distinta a la que dice el manual,
+  // porque alguien las cambio probando. Ejecutar la semilla no lo arreglaba,
+  // y el fallo solo se habria visto al intentar entrar delante del jurado.
+  //
+  // Una semilla que no puede devolver el sistema a un estado conocido no
+  // sirve para lo unico que existe.
   return prisma.usuario.upsert({
     where: { email },
-    update: { nombre, rol, activo: true },
+    update: { nombre, rol, activo: true, password, passwordCambiadaEn: new Date() },
     create: { nombre, email, password, rol },
   });
 }
@@ -105,6 +115,8 @@ async function main() {
       create: repuesto,
     });
   }
+
+  await sembrarDemo(prisma);
 
   console.log(`\n✔ Listo. Contraseña para todas las cuentas: ${PASSWORD_DEMO}\n`);
   console.table([

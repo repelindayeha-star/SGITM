@@ -4,7 +4,6 @@ frontend/dist
 .git
 .github
 docs
-pruebas
 *.zip
 *.log
 .env

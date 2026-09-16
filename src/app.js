@@ -59,6 +59,7 @@ app.use('/api/inventario', require('./routes/inventario.routes'));
 app.use('/api/diagnosticos', require('./routes/diagnostico.routes'));
 app.use('/api/facturas', require('./routes/factura.routes'));
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
+app.use('/api/reportes', require('./routes/reporte.routes'));
 app.use(errorHandler);
 
 module.exports = app;
