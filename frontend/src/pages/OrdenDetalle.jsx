@@ -17,6 +17,7 @@ import ErrorBanner from '../components/ErrorBanner';
 import CargandoInline from '../components/CargandoInline';
 import EstadoBadge from '../components/EstadoBadge';
 import LineaTiempoOrden from '../components/LineaTiempoOrden';
+import GaleriaEvidencias from '../components/GaleriaEvidencias';
 import Modal from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 import { puede } from '../utils/permisos';
@@ -142,6 +143,22 @@ export default function OrdenDetalle() {
           <p className="text-taller-400 text-[11px] font-mono mt-4 pt-3 border-t border-taller-700 break-all">
             Seguimiento del cliente: {`${window.location.origin}/seguimiento/${orden.codigo}`}
           </p>
+        </Panel>
+      </div>
+
+      <div className="mb-6">
+        <Panel titulo="Evidencias del trabajo">
+          <p className="text-taller-400 text-sm mb-4">
+            Las fotos que se suban aquí las ve el cliente en su portal y en la página de
+            seguimiento. Es lo que le permite comprobar qué se le hizo a la moto.
+          </p>
+          <GaleriaEvidencias
+            ordenId={orden.id}
+            evidencias={orden.evidencias || []}
+            editable={puede(usuario, 'ordenes', 'editar')}
+            ordenCerrada={['ENTREGADA', 'CANCELADA'].includes(orden.estado)}
+            alCambiar={cargarTodo}
+          />
         </Panel>
       </div>
 

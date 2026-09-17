@@ -33,10 +33,11 @@ model Usuario {
   // envia al registrarse.
   emailVerificado Boolean @default(false)
 
-  cliente          Cliente?
-  ordenesAsignadas OrdenTrabajo[]
-  cambiosDeEstado  HistorialEstadoOrden[]
-  tokensSeguridad  TokenSeguridad[]
+  cliente           Cliente?
+  ordenesAsignadas  OrdenTrabajo[]
+  cambiosDeEstado   HistorialEstadoOrden[]
+  tokensSeguridad   TokenSeguridad[]
+  evidenciasSubidas EvidenciaOrden[]
 
   @@map("usuarios")
 }
@@ -44,6 +45,42 @@ model Usuario {
 enum TipoTokenSeguridad {
   RECUPERACION_PASSWORD
   VERIFICACION_EMAIL
+}
+
+enum MomentoEvidencia {
+  ANTES
+  DURANTE
+  DESPUES
+}
+
+// Fotografias del trabajo hecho sobre una moto.
+//
+// Es la pieza que cierra el problema del que nace el proyecto: el cliente
+// deja la moto, se la devuelven arreglada y le dicen "era el motor", sin que
+// pueda ver que se hizo. Una foto del antes y del despues responde eso mejor
+// que cualquier descripcion escrita.
+//
+// La imagen NO se guarda aqui: aqui queda su direccion. Los archivos viven en
+// un proveedor externo porque el disco de un servidor en la nube se borra en
+// cada despliegue, y una evidencia que desaparece al actualizar la aplicacion
+// no es una evidencia.
+model EvidenciaOrden {
+  id                   String           @id @default(uuid())
+  ordenId              String
+  orden                OrdenTrabajo     @relation(fields: [ordenId], references: [id], onDelete: Cascade)
+  url                  String
+  urlMiniatura         String?
+  // Identificador que da el proveedor. Sin el no se puede borrar el archivo
+  // de alla, y borrar solo la fila dejaria la imagen huerfana para siempre.
+  identificadorPublico String?
+  momento              MomentoEvidencia @default(DURANTE)
+  descripcion          String?
+  usuarioId            String?
+  usuario              Usuario?         @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  createdAt            DateTime         @default(now())
+
+  @@index([ordenId, createdAt])
+  @@map("evidencias_orden")
 }
 
 // Un solo uso, con caducidad, y guardado cifrado.
@@ -147,6 +184,7 @@ model OrdenTrabajo {
   diagnostico      Diagnostico?
   factura          Factura?
   historialEstados HistorialEstadoOrden[]
+  evidencias       EvidenciaOrden[]
 
   @@map("ordenes_trabajo")
 }

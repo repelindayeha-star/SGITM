@@ -53,6 +53,26 @@ const env = {
     secreto: process.env.RECAPTCHA_SECRET_KEY,
   },
 
+  // Direccion publica de esta API. Solo se usa para armar el enlace de las
+  // imagenes cuando se guardan en disco (desarrollo sin Cloudinary).
+  urlPublicaApi: process.env.API_URL || `http://localhost:${Number(process.env.PORT) || 3001}`,
+
+  // Almacenamiento de las fotografias de evidencia.
+  //
+  // Sin configurar, las imagenes van al disco de este servidor. Sirve para
+  // desarrollar, pero el disco de un servidor en la nube se borra en cada
+  // despliegue: en produccion las tres variables son obligatorias.
+  cloudinary: {
+    configurado: Boolean(
+      process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET
+    ),
+    nombreNube: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
+
   // El correo no es obligatorio para arrancar: sin proveedor configurado el
   // sistema cae a una bandeja de prueba y avisa por consola. Lo que no puede
   // pasar es que parezca configurado sin estarlo, de ahi el indicador.

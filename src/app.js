@@ -38,6 +38,15 @@ app.use(
   })
 );
 
+// Las imagenes guardadas en disco, para el caso en que Cloudinary no este
+// configurado. Con Cloudinary esta carpeta se queda vacia y nadie la usa.
+app.use('/uploads', express.static(require('./services/almacenamiento.service').CARPETA_LOCAL, {
+  maxAge: '7d',
+  index: false,
+  // Que el navegador no adivine el tipo de un archivo subido por un usuario.
+  setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}));
+
 // Health real: consulta la base. Un health que responde OK sin tocar la
 // base de datos miente, y es justo lo que un monitor necesita saber.
 app.get('/api/health', async (req, res) => {

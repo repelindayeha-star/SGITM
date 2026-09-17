@@ -6,6 +6,7 @@ import ErrorBanner from '../components/ErrorBanner';
 import EmptyState from '../components/EmptyState';
 import EstadoBadge from '../components/EstadoBadge';
 import LineaTiempoOrden from '../components/LineaTiempoOrden';
+import GaleriaEvidencias from '../components/GaleriaEvidencias';
 import Modal from '../components/Modal';
 import { Select, Input, Textarea } from '../components/Campo';
 import { formatearFechaHora, formatearMoneda, aInputDatetimeLocal } from '../utils/formato';
@@ -123,6 +124,15 @@ export default function PortalCliente() {
                           estado={orden.estado}
                           historial={orden.historialEstados || []}
                         />
+
+                        {orden.evidencias?.length > 0 && (
+                          <div className="border-t border-taller-700 pt-3 mb-3">
+                            <p className="text-taller-200 text-xs font-medium uppercase tracking-wide mb-2.5">
+                              Fotos del trabajo
+                            </p>
+                            <GaleriaEvidencias ordenId={orden.id} evidencias={orden.evidencias} />
+                          </div>
+                        )}
 
                         {orden.diagnostico && (
                           <div className="border-t border-taller-700 pt-3 text-xs">

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Wrench, Search, Bike, LoaderCircle } from 'lucide-react';
 import LineaTiempoOrden from '../components/LineaTiempoOrden';
+import GaleriaEvidencias from '../components/GaleriaEvidencias';
 import EstadoBadge from '../components/EstadoBadge';
 import { formatearFecha } from '../utils/formato';
 import * as ordenService from '../services/orden.service';
@@ -143,6 +144,18 @@ export default function SeguimientoPublico() {
             )}
 
             <LineaTiempoOrden estado={orden.estado} historial={orden.historialEstados || []} />
+
+            {orden.evidencias?.length > 0 && (
+              <div className="mt-6 pt-5 border-t border-taller-700">
+                <h2 className="text-taller-100 text-sm font-semibold uppercase tracking-wide mb-1">
+                  Fotos del trabajo
+                </h2>
+                <p className="text-taller-400 text-xs mb-4">
+                  Lo que el taller registró mientras trabajaba en tu moto.
+                </p>
+                <GaleriaEvidencias ordenId={orden.id} evidencias={orden.evidencias} />
+              </div>
+            )}
           </div>
         )}
 

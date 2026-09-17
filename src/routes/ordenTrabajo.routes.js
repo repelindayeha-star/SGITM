@@ -1,5 +1,8 @@
 const { Router } = require('express');
 const ordenController = require('../controllers/ordenTrabajo.controller');
+const evidenciaController = require('../controllers/evidencia.controller');
+const recibirImagen = require('../middlewares/recibirImagen');
+const { validarEvidencia } = require('../validators/evidencia.validator');
 const validarCampos = require('../middlewares/validarCampos');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
@@ -93,6 +96,41 @@ router.delete(
   validarIdOrden,
   validarCampos,
   ordenController.eliminar
+);
+
+// ── Fotografias de evidencia ─────────────────────────────────────────
+//
+// Cuelgan de la orden porque no existen sin ella: son el registro de lo que
+// se le hizo a ESA moto.
+//
+// Verlas: tambien el cliente, comprobando que la orden sea suya. Es el
+// sentido de la funcion; si el dueno de la moto no puede ver las fotos, no
+// sirve de nada haberlas tomado.
+router.get(
+  '/:id/evidencias',
+  validarIdOrden,
+  validarCampos,
+  soloPropioSiCliente(duenoDeOrden),
+  evidenciaController.listar
+);
+
+// Subirlas y borrarlas: solo el personal del taller. Un cliente no documenta
+// el trabajo, lo recibe.
+router.post(
+  '/:id/evidencias',
+  autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
+  validarIdOrden,
+  validarCampos,
+  recibirImagen('imagen'),
+  validarEvidencia,
+  validarCampos,
+  evidenciaController.agregar
+);
+
+router.delete(
+  '/:id/evidencias/:evidenciaId',
+  autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
+  evidenciaController.eliminar
 );
 
 module.exports = router;

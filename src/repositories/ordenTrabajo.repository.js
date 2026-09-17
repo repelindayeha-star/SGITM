@@ -11,6 +11,10 @@ const incluirRelaciones = {
     include: { usuario: { select: { id: true, nombre: true, rol: true } } },
     orderBy: { createdAt: 'asc' },
   },
+  evidencias: {
+    include: { usuario: { select: { id: true, nombre: true, rol: true } } },
+    orderBy: { createdAt: 'asc' },
+  },
 };
 
 // Proyeccion para el seguimiento publico por codigo/QR.
@@ -32,6 +36,21 @@ const camposPublicos = {
   motocicleta: { select: { marca: true, modelo: true, anio: true } },
   historialEstados: {
     select: { estadoNuevo: true, createdAt: true },
+    orderBy: { createdAt: 'asc' },
+  },
+  // Las fotos SI salen aqui, y es deliberado: quien tiene el codigo es el
+  // dueno de la moto, y ver que le hicieron es justo el problema que este
+  // sistema existe para resolver. Lo que no sale es quien las tomo, igual
+  // que en el historial: los nombres del personal son informacion interna.
+  evidencias: {
+    select: {
+      id: true,
+      url: true,
+      urlMiniatura: true,
+      momento: true,
+      descripcion: true,
+      createdAt: true,
+    },
     orderBy: { createdAt: 'asc' },
   },
 };
