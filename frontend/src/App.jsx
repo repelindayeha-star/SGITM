@@ -10,6 +10,7 @@ import NoAutorizado from './pages/NoAutorizado';
 import Dashboard from './pages/Dashboard';
 import PortalCliente from './pages/PortalCliente';
 import SeguimientoPublico from './pages/SeguimientoPublico';
+import ActivarCuenta from './pages/ActivarCuenta';
 
 import Clientes from './pages/Clientes';
 import ClienteFormulario from './pages/ClienteFormulario';
@@ -46,6 +47,8 @@ function App() {
           {/* Seguimiento por codigo/QR: sin sesion, cualquiera con el codigo.
               Dos rutas para que funcione escrito a mano o escaneado. */}
           <Route path="/seguimiento" element={<SeguimientoPublico />} />
+          <Route path="/activar" element={<ActivarCuenta modo="activar" />} />
+          <Route path="/recuperar-codigo" element={<ActivarCuenta modo="recuperar" />} />
           <Route path="/seguimiento/:codigo" element={<SeguimientoPublico />} />
 
           {/* Panel administrativo: Administrador y Recepcionista */}

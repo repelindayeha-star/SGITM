@@ -166,6 +166,12 @@ export default function Login() {
               >
                 Olvide mi contrasena
               </Link>
+        <Link
+          to="/activar"
+          className="block text-center text-taller-400 hover:text-ambar-400 text-sm mt-3 transition-colors"
+        >
+          Activar mi cuenta con un codigo
+        </Link>
             </p>
           </form>
         </div>

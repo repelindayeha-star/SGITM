@@ -4,17 +4,16 @@ import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import Layout from '../components/Layout';
 import { Input } from '../components/Campo';
 import ErrorBanner from '../components/ErrorBanner';
-import * as authService from '../services/auth.service';
 import * as clienteService from '../services/cliente.service';
 
 export default function ClienteFormulario() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [aviso, setAviso] = useState('');
   const navigate = useNavigate();
 
   async function manejarSubmit(e) {
@@ -22,19 +21,13 @@ export default function ClienteFormulario() {
     setError('');
     setGuardando(true);
     try {
-      // Paso 1: crear el usuario con rol CLIENTE (captcha en bypass de desarrollo).
-      const usuario = await authService.registrar({
-        nombre,
-        email,
-        password,
-        rol: 'CLIENTE',
-        captchaToken: 'test-bypass-sigtm',
-      });
+      // Una sola llamada. El servidor crea la cuenta y el perfil juntos, sin
+      // contrasena utilizable, y le manda al cliente un codigo de seis digitos
+      // para que elija la suya. Aqui nadie escribe ni ve una contrasena ajena.
+      const respuesta = await clienteService.crearCliente({ nombre, email, telefono, direccion });
 
-      // Paso 2: crear el perfil de cliente asociado a ese usuario.
-      await clienteService.crearCliente({ usuarioId: usuario.id, telefono, direccion });
-
-      navigate('/clientes');
+      setAviso(respuesta.mensaje || 'Cliente registrado.');
+      setTimeout(() => navigate('/clientes'), 2200);
     } catch (err) {
       setError(err.response?.data?.mensaje || 'No se pudo crear el cliente.');
     } finally {
@@ -56,7 +49,7 @@ export default function ClienteFormulario() {
         Nuevo cliente
       </h1>
       <p className="text-taller-400 text-sm mb-7">
-        Se creara una cuenta de acceso y el perfil de cliente asociado.
+        Se le enviara un codigo a su correo para que active su cuenta y elija su propia contrasena.
       </p>
 
       <form
@@ -69,6 +62,12 @@ export default function ClienteFormulario() {
         <span className="absolute bottom-2.5 right-2.5 w-1 h-1 rounded-full bg-taller-700" />
 
         <ErrorBanner>{error}</ErrorBanner>
+
+        {aviso && (
+          <div className="mb-5 rounded-md border border-ambar-400/50 bg-ambar-400/10 px-3 py-2.5">
+            <p className="text-ambar-400 text-sm">{aviso}</p>
+          </div>
+        )}
 
         <p className="text-taller-200 text-xs font-semibold uppercase tracking-wide mb-3">Datos de acceso</p>
         <div className="grid grid-cols-2 gap-4 mb-5">
@@ -93,15 +92,13 @@ export default function ClienteFormulario() {
             />
           </div>
           <div className="col-span-2">
-            <Input
-              etiqueta="Contrasena temporal"
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimo 8 caracteres"
-            />
+            <div className="rounded-md border border-taller-700 bg-taller-900 px-3 py-2.5">
+              <p className="text-taller-200 text-xs leading-relaxed">
+                <span className="text-ambar-400 font-medium">No escribas ninguna contrasena.</span>{' '}
+                Al guardar, al cliente le llega un codigo a su correo y el elige la suya. Nadie del
+                taller la conoce.
+              </p>
+            </div>
           </div>
         </div>
 
