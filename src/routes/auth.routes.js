@@ -8,6 +8,8 @@ const {
   validarLogin,
   validarSolicitudRecuperacion,
   validarRestablecer,
+  validarSolicitudCodigo,
+  validarConfirmarCodigo,
 } = require('../validators/auth.validator');
 
 const router = Router();
@@ -82,6 +84,46 @@ router.post(
 );
 
 router.get('/verificar-correo/:token', frenoComprobacion, authController.verificarEmail);
+
+// Codigos de seis digitos.
+//
+// Pedir un codigo manda un correo: va con el freno estrecho, el mismo que
+// protege de usar el sistema para inundar el buzon de otra persona.
+//
+// Confirmar un codigo NO manda nada, asi que lleva el freno holgado, con
+// margen para que alguien se equivoque tecleando. La defensa de verdad
+// contra la fuerza bruta no es este freno sino el contador de intentos que
+// vive en la propia fila del codigo: ese sigue contando aunque el servidor
+// corra repartido en varias instancias, donde un contador en memoria no
+// serviria de nada.
+router.post(
+  '/activar/solicitar',
+  frenoEnvioCorreo,
+  validarSolicitudCodigo,
+  validarCampos,
+  authController.solicitarCodigoActivacion
+);
+router.post(
+  '/activar/confirmar',
+  frenoRestablecer,
+  validarConfirmarCodigo,
+  validarCampos,
+  authController.confirmarActivacion
+);
+router.post(
+  '/recuperar-codigo/solicitar',
+  frenoEnvioCorreo,
+  validarSolicitudCodigo,
+  validarCampos,
+  authController.solicitarCodigoRecuperacion
+);
+router.post(
+  '/recuperar-codigo/confirmar',
+  frenoRestablecer,
+  validarConfirmarCodigo,
+  validarCampos,
+  authController.confirmarRecuperacion
+);
 
 // Ruta protegida: requiere un token JWT válido en el header Authorization.
 router.get('/perfil', autenticar, (req, res) => {

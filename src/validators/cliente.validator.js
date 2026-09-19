@@ -1,9 +1,19 @@
 const { body, param } = require('express-validator');
 
 const validarCrearCliente = [
-  body('usuarioId')
-    .notEmpty().withMessage('El usuarioId es obligatorio.')
-    .isUUID().withMessage('El usuarioId debe ser un UUID válido.'),
+  // La recepcionista escribe nombre y correo. NO escribe contrasena: la
+  // cuenta nace sin una utilizable y el cliente elige la suya con el codigo
+  // que le llega al correo. Asi nadie del taller conoce la clave de nadie.
+  body('nombre')
+    .trim()
+    .notEmpty().withMessage('El nombre es obligatorio.')
+    .isLength({ min: 3 }).withMessage('El nombre debe tener al menos 3 caracteres.'),
+
+  body('email')
+    .trim()
+    .notEmpty().withMessage('El correo es obligatorio.')
+    .isEmail().withMessage('El correo no tiene un formato válido.')
+    .normalizeEmail({ gmail_remove_dots: false }),
 
   body('telefono')
     .trim()

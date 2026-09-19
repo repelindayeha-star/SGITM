@@ -1,5 +1,26 @@
 const { body } = require('express-validator');
 
+// UNA sola regla de contrasena para todo el sistema.
+//
+// Antes el registro exigia ocho caracteres y el restablecimiento exigia ocho
+// mas una letra y un numero. Se podia crear una cuenta con una contrasena que
+// despues el propio sistema no dejaba volver a poner. Ahora la regla vive en
+// un solo sitio y todas las puertas piden lo mismo.
+const reglaPassword = (campo = 'password') =>
+  body(campo)
+    .notEmpty().withMessage('La contraseña es obligatoria.')
+    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres.')
+    .matches(/[A-Za-z]/).withMessage('La contraseña debe incluir al menos una letra.')
+    .matches(/\d/).withMessage('La contraseña debe incluir al menos un número.');
+
+const reglaEmail = (campo = 'email') =>
+  body(campo)
+    .trim()
+    .notEmpty().withMessage('El correo es obligatorio.')
+    .isEmail().withMessage('El correo no tiene un formato válido.')
+    .normalizeEmail({ gmail_remove_dots: false });
+
+
 const validarRegistro = [
   body('nombre')
     .trim()
@@ -12,9 +33,7 @@ const validarRegistro = [
     .isEmail().withMessage('El correo no tiene un formato válido.')
     .normalizeEmail({ gmail_remove_dots: false }),
 
-  body('password')
-    .notEmpty().withMessage('La contraseña es obligatoria.')
-    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres.'),
+  reglaPassword(),
 
   // El registro publico solo crea CLIENTES.
   //
@@ -64,11 +83,30 @@ const validarRestablecer = [
     .trim()
     .notEmpty().withMessage('Falta el token del enlace.'),
 
-  body('password')
-    .notEmpty().withMessage('La contraseña es obligatoria.')
-    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres.')
-    .matches(/[A-Za-z]/).withMessage('La contraseña debe incluir al menos una letra.')
-    .matches(/\d/).withMessage('La contraseña debe incluir al menos un número.'),
+  reglaPassword(),
+
+  body('confirmacion')
+    .custom((valor, { req }) => valor === req.body.password)
+    .withMessage('Las dos contraseñas no coinciden.'),
+];
+
+// Pedir un codigo: solo hace falta el correo.
+const validarSolicitudCodigo = [reglaEmail()];
+
+// Confirmar un codigo y dejar la contrasena elegida.
+//
+// El codigo se exige de seis digitos exactos antes de tocar la base: asi un
+// intento mal formado ni siquiera gasta uno de los cinco intentos que tiene
+// el codigo de verdad.
+const validarConfirmarCodigo = [
+  reglaEmail(),
+
+  body('codigo')
+    .trim()
+    .notEmpty().withMessage('El código es obligatorio.')
+    .matches(/^[0-9]{6}$/).withMessage('El código son seis dígitos.'),
+
+  reglaPassword(),
 
   body('confirmacion')
     .custom((valor, { req }) => valor === req.body.password)
@@ -80,4 +118,6 @@ module.exports = {
   validarLogin,
   validarSolicitudRecuperacion,
   validarRestablecer,
+  validarSolicitudCodigo,
+  validarConfirmarCodigo,
 };

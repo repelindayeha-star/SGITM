@@ -1,9 +1,26 @@
 const clienteService = require('../services/cliente.service');
+const activacionService = require('../services/activacion.service');
 
 async function crear(req, res, next) {
   try {
-    const cliente = await clienteService.crear(req.body);
-    res.status(201).json({ exito: true, mensaje: 'Cliente creado correctamente.', data: cliente });
+    const { nombre, email, telefono, direccion } = req.body;
+    const { cliente, correoEnviado } = await activacionService.crearClienteDesdeRecepcion({
+      nombre,
+      email,
+      telefono,
+      direccion,
+    });
+
+    // Se le dice a la recepcionista si el correo salio o no. Si no salio, el
+    // cliente igual quedo registrado y ella puede reenviar el codigo: no se
+    // pierde el trabajo por un fallo del proveedor de correo.
+    res.status(201).json({
+      exito: true,
+      mensaje: correoEnviado
+        ? 'Cliente registrado. Le enviamos un codigo a su correo para que active su cuenta.'
+        : 'Cliente registrado, pero el correo no se pudo enviar. Reenvia el codigo mas tarde.',
+      data: cliente,
+    });
   } catch (error) {
     next(error);
   }

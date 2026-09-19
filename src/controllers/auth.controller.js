@@ -1,6 +1,7 @@
 const authService = require('../services/auth.service');
 const captchaService = require('../services/captcha.service');
 const recuperacionService = require('../services/recuperacion.service');
+const activacionService = require('../services/activacion.service');
 
 async function registrar(req, res, next) {
   try {
@@ -83,6 +84,67 @@ async function verificarEmail(req, res, next) {
   }
 }
 
+// --- Codigos de seis digitos -------------------------------------------
+//
+// Existen ademas de los enlaces porque el cliente de un taller abre el correo
+// en el celular y teclea los numeros en la pantalla que ya tiene delante. Las
+// cuatro responden siempre 200 con el mismo texto cuando el correo no existe,
+// para no confirmarle a nadie que cuentas hay.
+
+async function solicitarCodigoActivacion(req, res, next) {
+  try {
+    const r = await activacionService.enviarCodigo({
+      email: req.body.email,
+      tipo: 'VERIFICACION_EMAIL',
+    });
+    res.status(200).json({ exito: true, mensaje: r.mensaje });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function confirmarActivacion(req, res, next) {
+  try {
+    const { email, codigo, password } = req.body;
+    const r = await activacionService.confirmarCodigo({
+      email,
+      codigo,
+      password,
+      tipo: 'VERIFICACION_EMAIL',
+    });
+    res.status(200).json({ exito: true, mensaje: r.mensaje });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function solicitarCodigoRecuperacion(req, res, next) {
+  try {
+    const r = await activacionService.enviarCodigo({
+      email: req.body.email,
+      tipo: 'RECUPERACION_PASSWORD',
+    });
+    res.status(200).json({ exito: true, mensaje: r.mensaje });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function confirmarRecuperacion(req, res, next) {
+  try {
+    const { email, codigo, password } = req.body;
+    const r = await activacionService.confirmarCodigo({
+      email,
+      codigo,
+      password,
+      tipo: 'RECUPERACION_PASSWORD',
+    });
+    res.status(200).json({ exito: true, mensaje: r.mensaje });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   registrar,
   login,
@@ -90,4 +152,8 @@ module.exports = {
   comprobarTokenRecuperacion,
   restablecerPassword,
   verificarEmail,
+  solicitarCodigoActivacion,
+  confirmarActivacion,
+  solicitarCodigoRecuperacion,
+  confirmarRecuperacion,
 };

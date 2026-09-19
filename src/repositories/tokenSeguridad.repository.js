@@ -30,6 +30,30 @@ async function invalidarAnteriores(usuarioId, tipo) {
   });
 }
 
+
+// Busca el codigo vivo de un usuario.
+//
+// Hace falta buscar por usuario y no por huella porque cuando el codigo esta
+// MAL la huella no coincide con ninguna fila, y aun asi hay que encontrar el
+// registro para sumarle el intento fallido. Sin esto, equivocarse no costaria
+// nada y el contador de intentos no serviria para nada.
+async function buscarActivo(usuarioId, tipo) {
+  return prisma.tokenSeguridad.findFirst({
+    where: { usuarioId, tipo, usadoEn: null },
+    orderBy: { createdAt: 'desc' },
+    include: { usuario: true },
+  });
+}
+
+// Suma un intento fallido. Devuelve la fila actualizada para que el servicio
+// sepa cuantos quedan sin tener que volver a consultar.
+async function sumarIntento(id) {
+  return prisma.tokenSeguridad.update({
+    where: { id },
+    data: { intentos: { increment: 1 } },
+  });
+}
+
 async function eliminarCaducados() {
   return prisma.tokenSeguridad.deleteMany({
     where: { expiraEn: { lt: new Date() } },
@@ -41,5 +65,7 @@ module.exports = {
   buscarPorHash,
   marcarUsado,
   invalidarAnteriores,
+  buscarActivo,
+  sumarIntento,
   eliminarCaducados,
 };
