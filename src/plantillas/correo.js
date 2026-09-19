@@ -93,6 +93,71 @@ function verificacionEmail({ nombre, enlace }) {
   };
 }
 
+
+// El codigo se muestra grande, separado y en una sola linea.
+//
+// Se escribe como texto suelto y no como imagen ni como tabla apretada porque
+// el cliente lo va a leer en el celular, a veces a contraluz, y lo va a teclear
+// en otra pantalla. El espaciado entre letras es lo que evita confundir un 8
+// con un 0 cuando la pantalla esta sucia de grasa, que es el caso real de un
+// taller.
+function recuadroCodigo(codigo) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0;width:100%;">
+    <tr><td align="center" style="background:${NEGRO};border:1px solid ${AMBAR};border-radius:8px;padding:18px 12px;">
+      <span style="color:${AMBAR};font-size:34px;font-weight:bold;letter-spacing:10px;font-family:Consolas,'Courier New',monospace;">${codigo}</span>
+    </td></tr>
+  </table>`;
+}
+
+function codigoActivacion({ nombre, codigo, minutos, enlacePantalla }) {
+  return {
+    asunto: 'Tu codigo para activar la cuenta - SIGTM',
+    html: envoltura({
+      titulo: 'Activa tu cuenta',
+      cuerpo:
+        parrafo(`Hola ${nombre},`) +
+        parrafo(
+          'El taller registro tu motocicleta en SIGTM. Con este codigo activas tu cuenta y eliges tu propia contrasena:'
+        ) +
+        recuadroCodigo(codigo) +
+        (enlacePantalla
+          ? boton(enlacePantalla, 'Ir a la pantalla de activacion')
+          : parrafo('Escribelo en la pantalla de activacion de la aplicacion.')) +
+        nota(`El codigo caduca en ${minutos} minutos y solo admite cinco intentos.`) +
+        nota('Nadie del taller conoce ni puede ver tu contrasena: la eliges tu.') +
+        nota('Si no dejaste ninguna moto en el taller, ignora este mensaje y no lo compartas con nadie.'),
+    }),
+    texto:
+      `Hola ${nombre}.\n\n` +
+      `Tu codigo para activar la cuenta en SIGTM es: ${codigo}\n\n` +
+      `Caduca en ${minutos} minutos y solo admite cinco intentos.\n` +
+      `Nadie del taller conoce tu contrasena: la eliges tu.\n\n` +
+      `Si no dejaste ninguna moto en el taller, ignora este mensaje.`,
+  };
+}
+
+function codigoRecuperacion({ nombre, codigo, minutos, enlacePantalla }) {
+  return {
+    asunto: 'Tu codigo para recuperar la contrasena - SIGTM',
+    html: envoltura({
+      titulo: 'Recuperar la contrasena',
+      cuerpo:
+        parrafo(`Hola ${nombre},`) +
+        parrafo('Alguien pidio recuperar la contrasena de esta cuenta. Si fuiste tu, este es el codigo:') +
+        recuadroCodigo(codigo) +
+        (enlacePantalla ? boton(enlacePantalla, 'Ir a la pantalla') : '') +
+        nota(`Caduca en ${minutos} minutos y solo admite cinco intentos.`) +
+        nota('Si no pediste esto, no tienes que hacer nada: tu contrasena actual sigue funcionando.') +
+        nota('No le des este codigo a nadie, ni siquiera a alguien que diga ser del taller.'),
+    }),
+    texto:
+      `Hola ${nombre}.\n\n` +
+      `Tu codigo para recuperar la contrasena es: ${codigo}\n\n` +
+      `Caduca en ${minutos} minutos.\n` +
+      `Si no pediste esto, ignora el mensaje.`,
+  };
+}
+
 function cambioEstadoOrden({ nombre, codigo, moto, paso, descripcion, enlace }) {
   const deMoto = moto ? ` (${moto})` : '';
   return {
@@ -134,4 +199,11 @@ function ordenCancelada({ nombre, codigo, moto, motivo, enlace }) {
   };
 }
 
-module.exports = { recuperacionPassword, verificacionEmail, cambioEstadoOrden, ordenCancelada };
+module.exports = {
+  recuperacionPassword,
+  verificacionEmail,
+  codigoActivacion,
+  codigoRecuperacion,
+  cambioEstadoOrden,
+  ordenCancelada,
+};

@@ -44,6 +44,8 @@
 **Pantalla:** Pestaña A, sesión de recepción.
 
 **Acción:** Clientes → **Nuevo cliente**. Escribe nombre, correo y teléfono. Guardar.
+
+> **Ojo con esto, que es nuevo y es lo que más gusta:** en esa pantalla **no hay campo de contraseña**. Sale un aviso que dice *"No escribas ninguna contraseña"*. Señálalo.
 Luego Motocicletas → **Nueva** → selecciona a Marcela, marca, modelo, año y placa. Guardar.
 Luego Órdenes → **Nueva orden** → selecciona la moto, escribe el problema. Guardar.
 
@@ -54,6 +56,10 @@ Luego Órdenes → **Nueva orden** → selecciona la moto, escribe el problema. 
 > "Llega Marcela con una Pulsar. Recepción la registra, registra la moto, y abre la orden de trabajo.
 >
 > Fíjense en esto —" *(señala el código en pantalla)* "— **ese código lo acaba de generar el sistema**. Ese es el que va impreso en el recibo que se le entrega a Marcela, y es con el que ella va a poder consultar su moto sin llamar. Guárdenlo en la cabeza, que volvemos a él al final."
+
+**Y si quieres ganarte un punto extra**, añade esto señalando el aviso del formulario:
+
+> "Y noten una cosa: la recepcionista **no le pone contraseña al cliente**. No hay ni campo para eso. Al cliente le llega un código a su correo y él elige la suya. Nadie del taller conoce la contraseña de ningún cliente."
 
 **Qué señalamos:** el código, y **léelo en voz alta**. El jurado tiene que reconocerlo cuando reaparezca en el paso 5.
 
@@ -217,6 +223,7 @@ Escribe un código inventado, `OT-2026-ZZZZZZ`:
 | Falla algo a los 10 segundos | *"Esto lo tenemos grabado, vamos al video"*. Pestaña D. Sin disculpas largas. |
 | Se cae la red | La aplicación necesita internet para la base de datos. Video de respaldo, directo. |
 | El captcha se reinició | Pasa a la pestaña que sí tenga sesión y reordena los pasos. Por eso hay dos sesiones abiertas. |
+| Sale *"Demasiados intentos"* | **Es el sistema protegiéndose, no un fallo.** Pasa si ensayaron la demo muchas veces seguidas. Se limpia reiniciando el servidor (Ctrl+C y `npm run dev`). **Hazlo antes de subir a exponer, no en vivo.** |
 
 **La regla:** diez segundos de pantalla congelada y se pasa al video. Nadie recuerda que hubo video; todos recuerdan un minuto de silencio incómodo.
 
