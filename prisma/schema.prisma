@@ -96,6 +96,9 @@ model TokenSeguridad {
   tipo      TipoTokenSeguridad
   expiraEn  DateTime
   usadoEn   DateTime?
+  // Cuantas veces se ha fallado este codigo. Seis digitos son un millon
+  // de combinaciones: sin este contador se recorren todas.
+  intentos  Int                @default(0)
   createdAt DateTime           @default(now())
 
   @@index([usuarioId, tipo])
