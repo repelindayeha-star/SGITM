@@ -56,6 +56,27 @@ const frenoRestablecer = limitarIntentos({
   mensaje: 'Demasiados intentos. Solicita un enlace nuevo en unos minutos.',
 });
 
+// Los codigos tienen sus PROPIOS contadores.
+//
+// Reutilizar frenoEnvioCorreo para estas rutas fue un error: pedir un codigo
+// de activacion gastaba el cupo de pedir un enlace de recuperacion, y una
+// persona quedaba bloqueada en mitad de su recorrido por culpa de otra. Es
+// justo lo que advierte el comentario de mas arriba, y aqui se repitio.
+const frenoCodigoNuevo = limitarIntentos({
+  maximo: 5,
+  ventanaMinutos: 15,
+  mensaje: 'Demasiadas solicitudes de codigo. Revisa tu correo y espera unos minutos.',
+});
+
+// Confirmar no envia nada: hay margen para equivocarse tecleando. La defensa
+// de verdad contra la fuerza bruta es el contador de intentos de la propia
+// fila del codigo, no este freno.
+const frenoCodigoConfirmar = limitarIntentos({
+  maximo: 20,
+  ventanaMinutos: 15,
+  mensaje: 'Demasiados intentos. Solicita un codigo nuevo en unos minutos.',
+});
+
 router.post('/registro', frenoRegistro, validarRegistro, validarCampos, authController.registrar);
 router.post('/login', frenoLogin, validarLogin, validarCampos, authController.login);
 
@@ -98,28 +119,28 @@ router.get('/verificar-correo/:token', frenoComprobacion, authController.verific
 // serviria de nada.
 router.post(
   '/activar/solicitar',
-  frenoEnvioCorreo,
+  frenoCodigoNuevo,
   validarSolicitudCodigo,
   validarCampos,
   authController.solicitarCodigoActivacion
 );
 router.post(
   '/activar/confirmar',
-  frenoRestablecer,
+  frenoCodigoConfirmar,
   validarConfirmarCodigo,
   validarCampos,
   authController.confirmarActivacion
 );
 router.post(
   '/recuperar-codigo/solicitar',
-  frenoEnvioCorreo,
+  frenoCodigoNuevo,
   validarSolicitudCodigo,
   validarCampos,
   authController.solicitarCodigoRecuperacion
 );
 router.post(
   '/recuperar-codigo/confirmar',
-  frenoRestablecer,
+  frenoCodigoConfirmar,
   validarConfirmarCodigo,
   validarCampos,
   authController.confirmarRecuperacion
