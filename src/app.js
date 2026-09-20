@@ -66,7 +66,20 @@ app.use('/uploads', express.static(require('./services/almacenamiento.service').
 app.get('/api/health', async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    res.json({ exito: true, mensaje: 'SIGTM backend funcionando', baseDatos: 'ok' });
+    // Se informa si el correo y las imagenes tienen proveedor configurado.
+    //
+    // No es un adorno. Las dos cosas fallan EN SILENCIO cuando faltan sus
+    // variables: el correo cae a una bandeja de prueba que no entrega nada, y
+    // las fotos se guardan en el disco del servidor, que se borra en cada
+    // reinicio. Sin este dato, la unica forma de enterarse es que un cliente
+    // no reciba su codigo. No se expone ningun secreto, solo si estan puestos.
+    res.json({
+      exito: true,
+      mensaje: 'SIGTM backend funcionando',
+      baseDatos: 'ok',
+      correo: env.smtp.configurado ? 'configurado' : 'SIN CONFIGURAR',
+      imagenes: env.cloudinary.configurado ? 'configurado' : 'SIN CONFIGURAR',
+    });
   } catch (error) {
     res.status(503).json({ exito: false, mensaje: 'Sin conexion a la base de datos.' });
   }
