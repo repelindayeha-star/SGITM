@@ -73,7 +73,7 @@ app.get('/api/health', async (req, res) => {
     // las fotos se guardan en el disco del servidor, que se borra en cada
     // reinicio. Sin este dato, la unica forma de enterarse es que un cliente
     // no reciba su codigo. No se expone ningun secreto, solo si estan puestos.
-    res.json({
+    const cuerpo = {
       exito: true,
       mensaje: 'SIGTM backend funcionando',
       baseDatos: 'ok',
@@ -82,7 +82,29 @@ app.get('/api/health', async (req, res) => {
       // se estan tirando a una bandeja de prueba y no llegan a nadie.
       correo: env.brevo.configurado ? 'api' : env.smtp.configurado ? 'smtp' : 'SIN CONFIGURAR',
       imagenes: env.cloudinary.configurado ? 'configurado' : 'SIN CONFIGURAR',
-    });
+    };
+
+    // Con ?correo=1 se pregunta al proveedor si la clave sirve.
+    //
+    // Saber que la variable ESTA puesta no basta: una clave mal copiada deja
+    // el indicador de arriba en 'api' y el envio falla igual, pero el fallo
+    // solo se ve en el registro del alojamiento y solo despues de que alguien
+    // pidiera un codigo que nunca llego. Esta comprobacion pregunta por los
+    // datos de la cuenta, asi que NO gasta ningun envio del plan.
+    //
+    // No queda dentro del chequeo normal a proposito: el monitor lo consulta
+    // cada pocos minutos y no tiene por que golpear al proveedor de correo.
+    if (req.query.correo === '1') {
+      const correoService = require('./services/correo.service');
+      cuerpo.correoDetalle = {
+        // El remitente se muestra porque un valor con comillas o espacios de
+        // sobra se ve aqui de inmediato, y es el error mas facil de cometer.
+        remitente: env.smtp.remitente,
+        ...(await correoService.verificarConexion()),
+      };
+    }
+
+    res.json(cuerpo);
   } catch (error) {
     res.status(503).json({ exito: false, mensaje: 'Sin conexion a la base de datos.' });
   }
