@@ -29,6 +29,11 @@ services:
         sync: false
       - key: RECAPTCHA_SECRET_KEY
         sync: false
+      # El envio va por la API HTTP. Render no deja salir conexiones SMTP:
+      # se quedan esperando hasta caducar. Las variables SMTP_* se dejan
+      # porque el equipo trabaja con ellas en local.
+      - key: BREVO_API_KEY
+        sync: false
       - key: SMTP_HOST
         value: smtp-relay.brevo.com
       - key: SMTP_PORT

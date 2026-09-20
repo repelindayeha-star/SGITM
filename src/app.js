@@ -77,7 +77,10 @@ app.get('/api/health', async (req, res) => {
       exito: true,
       mensaje: 'SIGTM backend funcionando',
       baseDatos: 'ok',
-      correo: env.smtp.configurado ? 'configurado' : 'SIN CONFIGURAR',
+      // 'api' es la via buena en produccion; 'smtp' sirve en local pero el
+      // alojamiento la bloquea; 'SIN CONFIGURAR' significa que los correos
+      // se estan tirando a una bandeja de prueba y no llegan a nadie.
+      correo: env.brevo.configurado ? 'api' : env.smtp.configurado ? 'smtp' : 'SIN CONFIGURAR',
       imagenes: env.cloudinary.configurado ? 'configurado' : 'SIN CONFIGURAR',
     });
   } catch (error) {
