@@ -6,6 +6,37 @@
 // silencio y nadie se enteraba hasta que era tarde.
 require('dotenv').config();
 
+// Se limpian los valores antes de usarlos: se quitan los espacios de los
+// extremos y las comillas que envuelvan todo el valor.
+//
+// No es paranoia. En un archivo .env se acostumbra escribir CLAVE="valor" y
+// dotenv quita esas comillas al leerlo, asi que en local todo funciona. Los
+// paneles de los alojamientos guardan el texto TAL CUAL se pega: si alguien
+// copia el valor con sus comillas, o con un espacio o un tabulador delante,
+// el valor guardado los incluye. El resultado son fallos que no parecen de
+// configuracion: un servidor de correo que 'no existe', una carpeta de
+// compilacion que no aparece, un remitente que el proveedor rechaza.
+//
+// Ningun valor real de esta lista empieza o termina con espacios ni con
+// comillas, asi que quitarlos no puede romper nada y evita toda esa familia
+// de errores de una sola vez.
+const VARIABLES_DE_TEXTO = [
+  'DATABASE_URL', 'JWT_SECRET', 'JWT_EXPIRES_IN', 'FRONTEND_URL', 'API_URL',
+  'RECAPTCHA_SECRET_KEY', 'BREVO_API_KEY',
+  'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM',
+  'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET',
+];
+
+VARIABLES_DE_TEXTO.forEach((nombre) => {
+  const bruto = process.env[nombre];
+  if (typeof bruto !== 'string') return;
+  const limpio = bruto.trim().replace(/^(['"])([\s\S]*)\1$/, '$2').trim();
+  if (limpio !== bruto) {
+    process.env[nombre] = limpio;
+    console.warn(`[configuracion] ${nombre} traia espacios o comillas de sobra; se limpio.`);
+  }
+});
+
 const esProduccion = process.env.NODE_ENV === 'production';
 
 // [nombre, obligatoria siempre, obligatoria solo en produccion]
