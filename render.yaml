@@ -1,0 +1,47 @@
+# Configuracion del servicio en Render.
+#
+# La base de datos NO se declara aqui a proposito: seguimos usando Neon. La
+# base gratuita de Render caduca a los 30 dias y borra los datos, asi que
+# apuntar el proyecto a ella seria perderlo todo un mes despues.
+#
+# Las variables marcadas sync:false se escriben a mano en el panel de Render.
+# No van en el repositorio porque son secretos.
+services:
+  - type: web
+    name: sigtm-api
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: FRONTEND_URL
+        sync: false
+      - key: RECAPTCHA_SECRET_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp-relay.brevo.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

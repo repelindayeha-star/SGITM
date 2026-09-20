@@ -22,7 +22,21 @@ app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { poli
 
 // Origen explicito, nunca '*'. env.js garantiza que urlFrontend tiene valor,
 // asi que ya no existe el caso "falta la variable -> se abre a todo el mundo".
-app.use(cors({ origin: env.urlFrontend, credentials: true }));
+// Se comprueba el origen contra la lista en vez de pasar un solo valor.
+//
+// Las peticiones sin origen (curl, las pruebas de integracion, los chequeos
+// de salud del alojamiento) se dejan pasar: no vienen de un navegador, asi
+// que el CORS no las protege de nada y bloquearlas solo romperia el monitoreo.
+app.use(
+  cors({
+    origin(origen, callback) {
+      if (!origen) return callback(null, true);
+      if (env.origenesPermitidos.includes(origen)) return callback(null, true);
+      return callback(new Error(`Origen no permitido: ${origen}`));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan(env.esProduccion ? 'combined' : 'dev'));
 

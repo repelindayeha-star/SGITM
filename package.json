@@ -9,7 +9,9 @@
     "comprobar:acentos": "node herramientas/revisar-encoding.js",
     "test:integracion": "node pruebas/integracion/recuperacion.js && node pruebas/integracion/avisoCambioEstado.js",
     "db:seed": "prisma db seed",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "postinstall": "prisma generate",
+    "migrar:produccion": "prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
@@ -43,5 +45,8 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "engines": {
+    "node": ">=20 <23"
   }
 }

@@ -42,7 +42,21 @@ const env = {
   puerto: Number(process.env.PORT) || 3001,
 
   // En desarrollo asumimos el puerto por defecto de Vite.
-  urlFrontend: process.env.FRONTEND_URL || 'http://localhost:5173',
+  urlFrontend: (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim(),
+
+  // Todos los origenes que pueden hablar con esta API.
+  //
+  // FRONTEND_URL admite varios separados por coma porque en produccion hay
+  // al menos dos: la direccion que da Vercel y el dominio propio. Con un solo
+  // origen permitido, el navegador bloquea al otro y la aplicacion parece
+  // caida sin estarlo.
+  //
+  // El primero de la lista sigue siendo urlFrontend, que es el que se usa
+  // para construir los enlaces de los correos.
+  origenesPermitidos: (process.env.FRONTEND_URL || 'http://localhost:5173')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean),
 
   jwt: {
     secreto: process.env.JWT_SECRET,
