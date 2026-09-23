@@ -42,33 +42,33 @@ export default function Facturas() {
       )}
 
       {!cargando && facturas.length > 0 && (
-        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Numero</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Orden</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Metodo de pago</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Fecha</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide text-right">Total</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Numero</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Orden</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Metodo de pago</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Fecha</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide text-right">Total</th>
               </tr>
             </thead>
             <tbody>
               {facturas.map((f) => (
                 <tr key={f.id} className="border-b border-taller-800 last:border-0 hover:bg-taller-800/40 transition-colors">
-                  <td className="px-5 py-3.5 text-taller-100 font-mono text-xs">{f.numero}</td>
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-100 font-mono text-xs">{f.numero}</td>
+                  <td className="px-3 sm:px-5 py-3.5">
                     <Link to={`/ordenes/${f.orden?.id}`} className="text-ambar-400 hover:underline font-mono text-xs">
                       {f.orden?.codigo}
                     </Link>
                   </td>
-                  <td className="px-5 py-3.5 text-taller-200">{f.orden?.cliente?.usuario?.nombre ?? '-'}</td>
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200">{f.orden?.cliente?.usuario?.nombre ?? '-'}</td>
+                  <td className="px-3 sm:px-5 py-3.5">
                     <Badge variante="neutro">{f.metodoPago}</Badge>
                   </td>
-                  <td className="px-5 py-3.5 text-taller-400 text-xs">{formatearFecha(f.createdAt)}</td>
-                  <td className="px-5 py-3.5 text-right text-taller-100 font-semibold font-mono">
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-400 text-xs">{formatearFecha(f.createdAt)}</td>
+                  <td className="px-3 sm:px-5 py-3.5 text-right text-taller-100 font-semibold font-mono">
                     {formatearMoneda(f.total)}
                   </td>
                 </tr>

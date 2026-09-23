@@ -168,6 +168,7 @@ export default function RestablecerPassword() {
             <input
               id="password"
               type={mostrar ? 'text' : 'password'}
+              autoComplete="new-password"
               required
               autoFocus
               value={password}
@@ -211,6 +212,7 @@ export default function RestablecerPassword() {
           <input
             id="confirmacion"
             type={mostrar ? 'text' : 'password'}
+            autoComplete="new-password"
             required
             value={confirmacion}
             onChange={(e) => setConfirmacion(e.target.value)}

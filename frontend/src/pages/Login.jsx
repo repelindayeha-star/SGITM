@@ -64,7 +64,7 @@ export default function Login() {
           <div className="w-14 h-14 rounded-lg bg-taller-800 border border-taller-700 flex items-center justify-center mb-4 shadow-lg">
             <Wrench className="w-7 h-7 text-ambar-400" strokeWidth={1.75} />
           </div>
-          <h1 className="font-display text-3xl font-semibold text-taller-100 tracking-wide uppercase">SIGTM</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-semibold text-taller-100 tracking-wide uppercase">SIGTM</h1>
           <p className="text-taller-400 text-xs font-mono mt-1 tracking-wider">
             SISTEMA INTEGRAL DE GESTION - TALLERES DE MOTOCICLETAS
           </p>
@@ -94,6 +94,7 @@ export default function Login() {
               </label>
               <input
                 type="email"
+                autoComplete="username"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -109,6 +110,7 @@ export default function Login() {
               <div className="relative">
                 <input
                   type={mostrarPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

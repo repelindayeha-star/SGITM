@@ -85,11 +85,11 @@ export default function Usuarios() {
           <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Rol</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Alta</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Rol</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Alta</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
@@ -101,23 +101,23 @@ export default function Usuarios() {
                     key={u.id}
                     className="border-b border-taller-800 last:border-0 hover:bg-taller-800/40 transition-colors"
                   >
-                    <td className="px-5 py-3.5 text-taller-100 font-medium">
+                    <td className="px-3 sm:px-5 py-3.5 text-taller-100 font-medium">
                       {u.nombre}
                       {esYo && <span className="text-taller-400 text-xs font-normal ml-2">(tú)</span>}
                     </td>
-                    <td className="px-5 py-3.5 text-taller-200 font-mono text-xs">{u.email}</td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 sm:px-5 py-3.5 text-taller-200 font-mono text-xs">{u.email}</td>
+                    <td className="px-3 sm:px-5 py-3.5">
                       <Badge variante={VARIANTE_ROL[u.rol] ?? 'neutro'}>{u.rol}</Badge>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 sm:px-5 py-3.5">
                       <Badge variante={u.activo ? 'verde' : 'rojo'}>
                         {u.activo ? 'Activo' : 'Inactivo'}
                       </Badge>
                     </td>
-                    <td className="px-5 py-3.5 text-taller-400 text-xs font-mono">
+                    <td className="px-3 sm:px-5 py-3.5 text-taller-400 text-xs font-mono">
                       {formatearFecha(u.createdAt)}
                     </td>
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-3 sm:px-5 py-3.5 text-right">
                       {/* Desactivarse a uno mismo dejaria la sesion sin cuenta:
                           el backend tambien lo rechaza, aqui solo se oculta. */}
                       {!esYo && (
@@ -209,6 +209,7 @@ function ModalNuevoUsuario({ abierto, onCerrar, onCreado }) {
         <Input
           etiqueta="Contraseña"
           type="password"
+          autoComplete="new-password"
           required
           minLength={8}
           value={password}

@@ -70,7 +70,7 @@ export default function ClienteFormulario() {
         )}
 
         <p className="text-taller-200 text-xs font-semibold uppercase tracking-wide mb-3">Datos de acceso</p>
-        <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div className="col-span-2">
             <Input
               etiqueta="Nombre completo"
@@ -105,7 +105,7 @@ export default function ClienteFormulario() {
         <div className="h-px bg-taller-700 mb-5" />
 
         <p className="text-taller-200 text-xs font-semibold uppercase tracking-wide mb-3">Datos de contacto</p>
-        <div className="grid grid-cols-2 gap-4 mb-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-7">
           <Input
             etiqueta="Telefono"
             type="tel"

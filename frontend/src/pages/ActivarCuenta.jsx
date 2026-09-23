@@ -169,6 +169,7 @@ export default function ActivarCuenta({ modo = 'activar' }) {
             <input
               id="password"
               type="password"
+              autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -184,6 +185,7 @@ export default function ActivarCuenta({ modo = 'activar' }) {
             <input
               id="confirmacion"
               type="password"
+              autoComplete="new-password"
               required
               value={confirmacion}
               onChange={(e) => setConfirmacion(e.target.value)}

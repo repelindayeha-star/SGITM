@@ -104,7 +104,7 @@ export default function MotocicletaFormulario() {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <Input
               etiqueta="Placa"
               type="text"
@@ -126,7 +126,7 @@ export default function MotocicletaFormulario() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-7">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-7">
             <Input
               etiqueta="Marca"
               type="text"

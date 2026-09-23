@@ -54,15 +54,15 @@ export default function Ordenes() {
       )}
 
       {!cargando && ordenes.length > 0 && (
-        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Codigo</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicleta</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Mecanico</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Codigo</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Cliente</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicleta</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Mecanico</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -72,7 +72,7 @@ export default function Ordenes() {
                   onClick={() => navigate(`/ordenes/${orden.id}`)}
                   className="border-b border-taller-800 last:border-0 hover:bg-taller-800/40 transition-colors cursor-pointer"
                 >
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3.5">
                     <Link
                       to={`/ordenes/${orden.id}`}
                       onClick={(e) => e.stopPropagation()}
@@ -81,9 +81,9 @@ export default function Ordenes() {
                       {orden.codigo}
                     </Link>
                   </td>
-                  <td className="px-5 py-3.5 text-taller-200">{orden.cliente?.usuario?.nombre ?? '-'}</td>
-                  <td className="px-5 py-3.5 text-taller-200 font-mono text-xs">{orden.motocicleta?.placa ?? '-'}</td>
-                  <td className="px-5 py-3.5 text-taller-200 text-xs">
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200">{orden.cliente?.usuario?.nombre ?? '-'}</td>
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200 font-mono text-xs">{orden.motocicleta?.placa ?? '-'}</td>
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200 text-xs">
                     {orden.mecanico ? (
                       <span className="flex items-center gap-1.5">
                         <Wrench className="w-3.5 h-3.5 text-taller-400" />
@@ -93,7 +93,7 @@ export default function Ordenes() {
                       <span className="text-taller-400">Sin asignar</span>
                     )}
                   </td>
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3.5">
                     <EstadoBadge estado={orden.estado} />
                   </td>
                 </tr>

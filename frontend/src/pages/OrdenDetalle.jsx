@@ -484,8 +484,8 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
         <>
           <p className="text-taller-200 text-sm mb-4">{diagnostico.descripcion}</p>
 
-          <div className="rounded-lg border border-taller-700 overflow-hidden mb-4">
-            <table className="w-full text-sm">
+          <div className="rounded-lg border border-taller-700 overflow-x-auto mb-4">
+            <table className="w-full text-sm min-w-[640px]">
               <thead>
                 <tr className="border-b border-taller-700 text-left bg-taller-900/40">
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Item</th>
@@ -569,7 +569,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                 value={itemDescripcion}
                 onChange={(e) => setItemDescripcion(e.target.value)}
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Input
                   etiqueta="Cantidad"
                   type="number"

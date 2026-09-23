@@ -61,14 +61,14 @@ export default function Clientes() {
       )}
 
       {!cargando && clientes.length > 0 && (
-        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Telefono</th>
-                <th className="px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicletas</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Nombre</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Correo</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Telefono</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Motocicletas</th>
               </tr>
             </thead>
             <tbody>
@@ -77,10 +77,10 @@ export default function Clientes() {
                   key={cliente.id}
                   className="border-b border-taller-800 last:border-0 hover:bg-taller-800/40 transition-colors"
                 >
-                  <td className="px-5 py-3.5 text-taller-100 font-medium">{cliente.usuario?.nombre}</td>
-                  <td className="px-5 py-3.5 text-taller-200 font-mono text-xs">{cliente.usuario?.email}</td>
-                  <td className="px-5 py-3.5 text-taller-200">{cliente.telefono}</td>
-                  <td className="px-5 py-3.5">
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-100 font-medium">{cliente.usuario?.nombre}</td>
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200 font-mono text-xs">{cliente.usuario?.email}</td>
+                  <td className="px-3 sm:px-5 py-3.5 text-taller-200">{cliente.telefono}</td>
+                  <td className="px-3 sm:px-5 py-3.5">
                     <Badge variante="ambar">
                       <Bike className="w-3 h-3 mr-1 inline" />
                       {cliente.motocicletas?.length ?? 0}

@@ -8,6 +8,7 @@ import {
   Package,
   Receipt,
   UserCog,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -27,34 +28,73 @@ const ITEMS_MENU = [
   { to: '/usuarios', etiqueta: 'Usuarios', icono: UserCog, roles: ['ADMINISTRADOR'] },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ abierto = false, onCerrar = () => {} }) {
   const { usuario } = useAuth();
 
   const itemsVisibles = ITEMS_MENU.filter((item) => item.roles.includes(usuario?.rol));
 
+  const enlaces = (
+    <nav className="space-y-1">
+      {itemsVisibles.map((item) => {
+        const Icono = item.icono;
+        return (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            onClick={onCerrar}
+            className={({ isActive }) =>
+              `flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-ambar-400/15 text-ambar-400'
+                  : 'text-taller-200 hover:bg-taller-800 hover:text-taller-100'
+              }`
+            }
+          >
+            <Icono className="w-4 h-4" strokeWidth={1.75} />
+            {item.etiqueta}
+          </NavLink>
+        );
+      })}
+    </nav>
+  );
+
   return (
-    <aside className="w-60 shrink-0 bg-taller-850 border-r border-taller-700 min-h-[calc(100vh-4rem)] py-6 px-3 hidden md:block">
-      <nav className="space-y-1">
-        {itemsVisibles.map((item) => {
-          const Icono = item.icono;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-ambar-400/15 text-ambar-400'
-                    : 'text-taller-200 hover:bg-taller-800 hover:text-taller-100'
-                }`
-              }
-            >
-              <Icono className="w-4 h-4" strokeWidth={1.75} />
-              {item.etiqueta}
-            </NavLink>
-          );
-        })}
-      </nav>
-    </aside>
+    <>
+      {/* Escritorio: el menu es una columna fija. */}
+      <aside className="w-60 shrink-0 bg-taller-850 border-r border-taller-700 min-h-[calc(100vh-4rem)] py-6 px-3 hidden md:block">
+        {enlaces}
+      </aside>
+
+      {/* Celular: el mismo menu, como cajon sobre la pantalla.
+          Antes esta columna simplemente se ocultaba y no la reemplazaba nada,
+          asi que en un telefono no habia forma de pasar de un modulo a otro
+          ni de volver: la aplicacion quedaba sin navegacion. */}
+      {abierto && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            type="button"
+            aria-label="Cerrar menu"
+            onClick={onCerrar}
+            className="absolute inset-0 w-full h-full bg-black/60"
+          />
+          <aside className="absolute left-0 top-0 h-full w-64 max-w-[80%] bg-taller-850 border-r border-taller-700 py-4 px-3 overflow-y-auto">
+            <div className="flex items-center justify-between px-2 pb-3 mb-3 border-b border-taller-700">
+              <span className="font-display text-taller-100 text-xs font-semibold uppercase tracking-wide">
+                Menu
+              </span>
+              <button
+                type="button"
+                onClick={onCerrar}
+                aria-label="Cerrar menu"
+                className="text-taller-400 hover:text-ambar-400 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {enlaces}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
