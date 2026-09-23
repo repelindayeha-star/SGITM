@@ -10,6 +10,7 @@ async function obtenerResumen() {
     ingresosFacturados,
     totalFacturas,
     repuestosStockBajo,
+    negocio,
   ] = await Promise.all([
     dashboardRepository.contarOrdenesPorEstado(),
     dashboardRepository.contarClientes(),
@@ -18,6 +19,9 @@ async function obtenerResumen() {
     dashboardRepository.sumarIngresosFacturados(),
     dashboardRepository.contarFacturas(),
     inventarioService.listarStockBajo(),
+    // Vista de negocio: cuanto entro, de donde salio y que produjo cada
+    // mecanico. Es lo que le sirve al dueno del taller.
+    dashboardRepository.resumirNegocio(),
   ]);
 
   return {
@@ -31,6 +35,7 @@ async function obtenerResumen() {
       cantidad: repuestosStockBajo.length,
       detalle: repuestosStockBajo,
     },
+    negocio,
   };
 }
 

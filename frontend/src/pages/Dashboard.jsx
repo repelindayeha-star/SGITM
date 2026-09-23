@@ -7,6 +7,8 @@ import {
   Banknote,
   PackageX,
   AlertTriangle,
+  TrendingUp,
+  Wrench,
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import TarjetaMetrica from '../components/TarjetaMetrica';
@@ -45,6 +47,10 @@ export default function Dashboard() {
   // El Administrador supervisa (clientes, inventario, facturacion);
   // la operacion diaria (ordenes, motos, citas) es dominio de Recepcionista.
   const verOperacion = puede(usuario, 'ordenes', 'ver');
+
+  // El administrador es el dueno del negocio: ve plata, no operacion diaria.
+  const esAdministrador = usuario?.rol === 'ADMINISTRADOR';
+  const negocio = resumen?.negocio;
 
   const totalOrdenesActivas =
     resumen?.ordenesPorEstado
@@ -119,6 +125,100 @@ export default function Dashboard() {
               to="/facturas"
             />
           </div>
+
+          {esAdministrador && negocio && (
+            <div className="relative bg-taller-850 border border-taller-700 rounded-xl p-5 sm:p-6 mb-8">
+              <h2 className="flex items-center gap-2 text-taller-100 font-semibold text-sm mb-1 uppercase tracking-wide">
+                <TrendingUp className="w-4 h-4 text-ambar-400" />
+                Resultados del negocio
+              </h2>
+              <p className="text-taller-400 text-xs mb-5">
+                De donde salieron los ingresos y que produjo cada mecanico.
+              </p>
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                {[
+                  ['Ingresos del mes', formatearMoneda(negocio.ingresosDelMes)],
+                  ['Ingresos totales', formatearMoneda(negocio.ingresosTotales)],
+                  ['Ticket promedio', formatearMoneda(negocio.ticketPromedio)],
+                  ['Facturas emitidas', negocio.cantidadFacturas],
+                ].map(([etiqueta, valor]) => (
+                  <div key={etiqueta} className="bg-taller-900 border border-taller-700 rounded-lg px-3 py-3">
+                    <p className="text-taller-400 text-[10px] uppercase tracking-wide mb-1">{etiqueta}</p>
+                    <p className="text-ambar-400 font-mono text-base font-semibold break-words">{valor}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Composicion: cuanto vino del trabajo de la gente y cuanto de
+                  vender repuestos. Son dos negocios distintos dentro del mismo
+                  taller y conviene verlos separados. */}
+              <p className="text-taller-200 text-xs font-medium uppercase tracking-wide mb-2">
+                De donde vienen los ingresos
+              </p>
+              {(() => {
+                const mo = Number(negocio.composicion.manoObra) || 0;
+                const rp = Number(negocio.composicion.repuestos) || 0;
+                const suma = mo + rp;
+                const pct = (v) => (suma > 0 ? Math.round((v / suma) * 100) : 0);
+                return (
+                  <div className="mb-6">
+                    <div className="flex h-2.5 rounded-full overflow-hidden bg-taller-900 mb-2">
+                      <div className="bg-ambar-400" style={{ width: `${pct(mo)}%` }} />
+                      <div className="bg-taller-600" style={{ width: `${pct(rp)}%` }} />
+                    </div>
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs">
+                      <span className="text-taller-300">
+                        <span className="inline-block w-2 h-2 rounded-full bg-ambar-400 mr-1.5" />
+                        Mano de obra <span className="font-mono text-taller-100">{formatearMoneda(mo)}</span>
+                        <span className="text-taller-400"> ({pct(mo)}%)</span>
+                      </span>
+                      <span className="text-taller-300">
+                        <span className="inline-block w-2 h-2 rounded-full bg-taller-600 mr-1.5" />
+                        Repuestos <span className="font-mono text-taller-100">{formatearMoneda(rp)}</span>
+                        <span className="text-taller-400"> ({pct(rp)}%)</span>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <p className="text-taller-200 text-xs font-medium uppercase tracking-wide mb-2">
+                Produccion por mecanico
+              </p>
+              {negocio.porMecanico.length === 0 ? (
+                <p className="text-taller-400 text-sm">Todavia no hay facturas emitidas.</p>
+              ) : (
+                <div className="space-y-2">
+                  {negocio.porMecanico.map((m) => {
+                    const maximo = Math.max(...negocio.porMecanico.map((x) => x.ingresos), 1);
+                    return (
+                      <div key={m.nombre} className="flex items-center gap-3">
+                        <span className="flex items-center gap-1.5 text-taller-200 text-xs w-36 sm:w-44 shrink-0 truncate">
+                          <Wrench className="w-3 h-3 text-taller-400 shrink-0" />
+                          {m.nombre}
+                        </span>
+                        <div className="flex-1 h-2 bg-taller-900 rounded-full overflow-hidden min-w-0">
+                          <div className="h-full bg-ambar-400 rounded-full"
+                               style={{ width: `${(m.ingresos / maximo) * 100}%` }} />
+                        </div>
+                        <span className="text-taller-100 font-mono text-xs w-24 text-right shrink-0">
+                          {formatearMoneda(m.ingresos)}
+                        </span>
+                        <span className="text-taller-400 text-[11px] w-16 text-right shrink-0 hidden sm:block">
+                          {m.ordenes} {m.ordenes === 1 ? 'orden' : 'ordenes'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <p className="text-taller-400 text-[11px] mt-4">
+                Los ingresos se reparten por el mecanico asignado a cada orden facturada.
+              </p>
+            </div>
+          )}
 
           {verOperacion && (
             <div className="relative bg-taller-850 border border-taller-700 rounded-xl p-6 mb-8">
