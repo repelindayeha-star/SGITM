@@ -109,6 +109,9 @@ export default function ClienteFormulario() {
           <Input
             etiqueta="Telefono"
             type="tel"
+            inputMode="numeric"
+            pattern="[0-9+() -]{7,20}"
+            title="Entre 7 y 15 digitos. Se aceptan espacios, guiones y +"
             required
             value={telefono}
             onChange={(e) => setTelefono(e.target.value)}
