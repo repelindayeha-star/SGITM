@@ -1,4 +1,5 @@
 const { body, param } = require('express-validator');
+const { normalizarPlaca, esPlacaMotoValida, MENSAJE_PLACA } = require('../utils/placa');
 
 const anioActual = new Date().getFullYear();
 
@@ -7,10 +8,15 @@ const validarCrearMotocicleta = [
     .notEmpty().withMessage('El clienteId es obligatorio.')
     .isUUID().withMessage('El clienteId debe ser un UUID válido.'),
 
+  // La placa se normaliza ANTES de validarla: la gente escribe "abc 12 d" o
+  // "ABC-12D" y las dos son la misma placa. Como customSanitizer corre antes
+  // que la comprobacion, lo que llega al servicio ya viene limpio, y la
+  // restriccion de unicidad de la base no se puede burlar con un guion.
   body('placa')
     .trim()
     .notEmpty().withMessage('La placa es obligatoria.')
-    .isLength({ min: 5, max: 8 }).withMessage('La placa debe tener entre 5 y 8 caracteres.'),
+    .customSanitizer(normalizarPlaca)
+    .custom(esPlacaMotoValida).withMessage(MENSAJE_PLACA),
 
   body('marca')
     .trim()

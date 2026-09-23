@@ -105,15 +105,27 @@ export default function MotocicletaFormulario() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-            <Input
-              etiqueta="Placa"
-              type="text"
-              required
-              value={placa}
-              onChange={(e) => setPlaca(e.target.value.toUpperCase())}
-              placeholder="ABC123"
-              className="uppercase"
-            />
+            {/* El marcador decia ABC123, que es formato de CARRO. Esta
+                aplicacion es de motocicletas: tres letras, dos numeros y una
+                letra final opcional. El patron lo hace cumplir el propio
+                navegador; el servidor lo vuelve a comprobar de todas formas. */}
+            <div>
+              <Input
+                etiqueta="Placa"
+                type="text"
+                required
+                value={placa}
+                onChange={(e) => setPlaca(e.target.value.toUpperCase().replace(/[\s-]/g, ''))}
+                placeholder="ABC12D"
+                maxLength={6}
+                pattern="[A-Za-z]{3}[0-9]{2}[A-Za-z]?"
+                title="Tres letras, dos numeros y una letra final opcional. Ejemplos: ABC12 o ABC12D"
+                className="uppercase"
+              />
+              <p className="text-taller-400 text-[11px] mt-1">
+                Formato de motocicleta: 3 letras + 2 numeros + letra opcional
+              </p>
+            </div>
             <Input
               etiqueta="Anio"
               type="number"
