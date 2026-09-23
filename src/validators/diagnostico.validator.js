@@ -10,6 +10,13 @@ const validarCrearDiagnostico = [
     .notEmpty().withMessage('La descripción es obligatoria.')
     .isLength({ min: 5 }).withMessage('La descripción debe tener al menos 5 caracteres.'),
 
+  // Advertencias del mecanico que NO son parte de este trabajo. Opcional:
+  // no todo trabajo deja una. Con tope, porque va impreso en la factura.
+  body('observaciones')
+    .optional({ values: 'falsy' })
+    .trim()
+    .isLength({ max: 500 }).withMessage('Las observaciones no pueden pasar de 500 caracteres.'),
+
   body('manoObra')
     .notEmpty().withMessage('El valor de mano de obra es obligatorio.')
     .isFloat({ min: 0 }).withMessage('La mano de obra debe ser un número mayor o igual a 0.'),
@@ -18,6 +25,10 @@ const validarCrearDiagnostico = [
 const validarActualizarDiagnostico = [
   param('id').isUUID().withMessage('El id debe ser un UUID válido.'),
   body('descripcion').optional().trim(),
+  body('observaciones')
+    .optional({ values: 'falsy' })
+    .trim()
+    .isLength({ max: 500 }).withMessage('Las observaciones no pueden pasar de 500 caracteres.'),
   body('manoObra').optional().isFloat({ min: 0 }).withMessage('La mano de obra debe ser válida.'),
 ];
 

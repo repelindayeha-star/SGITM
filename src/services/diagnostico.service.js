@@ -4,7 +4,7 @@ const ordenRepository = require('../repositories/ordenTrabajo.repository');
 const repuestoRepository = require('../repositories/repuesto.repository');
 const AppError = require('../utils/AppError');
 
-async function crearDiagnostico({ ordenId, descripcion, manoObra }) {
+async function crearDiagnostico({ ordenId, descripcion, observaciones, manoObra }) {
   const orden = await ordenRepository.buscarPorId(ordenId);
   if (!orden) {
     throw new AppError('La orden de trabajo no existe.', 404);
@@ -22,7 +22,7 @@ async function crearDiagnostico({ ordenId, descripcion, manoObra }) {
     );
   }
 
-  return diagnosticoRepository.crear({ ordenId, descripcion, manoObra });
+  return diagnosticoRepository.crear({ ordenId, descripcion, observaciones, manoObra });
 }
 
 async function obtenerPorOrdenId(ordenId) {

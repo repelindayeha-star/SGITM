@@ -222,6 +222,10 @@ model Diagnostico {
   ordenId     String       @unique
   orden       OrdenTrabajo @relation(fields: [ordenId], references: [id])
   descripcion String
+  // Lo que el mecanico quiere advertirle al cliente y no es parte de este
+  // trabajo: "se cambiaron las pastillas, pero hay que cambiar el disco lo
+  // antes posible". Es opcional: no todo trabajo deja una advertencia.
+  observaciones String?
   manoObra    Decimal      @db.Decimal(10, 2)
   createdAt   DateTime     @default(now())
 

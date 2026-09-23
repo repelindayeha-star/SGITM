@@ -354,6 +354,7 @@ function PanelMecanico({ orden, usuario, onActualizado }) {
 function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usuario, onActualizado }) {
   const puedeGestionar = puede(usuario, 'diagnostico', 'gestionar');
   const [descripcion, setDescripcion] = useState('');
+  const [observaciones, setObservaciones] = useState('');
   const [manoObra, setManoObra] = useState('');
   const [creando, setCreando] = useState(false);
   const [errorLocal, setErrorLocal] = useState('');
@@ -373,6 +374,9 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
       await diagnosticoService.crearDiagnostico({
         ordenId: orden.id,
         descripcion,
+        // Se manda solo si hay algo escrito: el campo es opcional y no tiene
+        // sentido guardar una cadena vacia.
+        observaciones: observaciones.trim() || undefined,
         manoObra: Number(manoObra),
       });
       onActualizado();
@@ -460,6 +464,22 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
             onChange={(e) => setDescripcion(e.target.value)}
             placeholder="Se detecto desgaste en pastillas de freno..."
           />
+          {/* Lo que el mecanico quiere advertirle al cliente y NO es parte de
+              este trabajo. Opcional a proposito: no todo trabajo deja una
+              advertencia, y obligarla haria que se escriba "ninguna". */}
+          <div>
+            <Textarea
+              etiqueta="Observaciones (opcional)"
+              rows={2}
+              maxLength={500}
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+              placeholder="Se cambiaron las pastillas, pero hay que cambiar el disco lo antes posible..."
+            />
+            <p className="text-taller-400 text-[11px] mt-1">
+              Recomendaciones para el cliente. Quedan en la orden y en la factura. {observaciones.length}/500
+            </p>
+          </div>
           <Input
             etiqueta="Mano de obra (COP)"
             type="number"
@@ -483,6 +503,18 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
       {diagnostico && (
         <>
           <p className="text-taller-200 text-sm mb-4">{diagnostico.descripcion}</p>
+
+          {/* Advertencia del mecanico sobre algo que NO es parte de este
+              trabajo. Se destaca porque es justo lo que el cliente se lleva
+              y lo que evita que vuelva por lo mismo en un mes. */}
+          {diagnostico.observaciones && (
+            <div className="rounded-lg border border-ambar-400/40 bg-ambar-400/5 px-4 py-3 mb-4">
+              <p className="text-ambar-400 text-[11px] font-medium uppercase tracking-wide mb-1">
+                Observaciones del mecanico
+              </p>
+              <p className="text-taller-100 text-sm">{diagnostico.observaciones}</p>
+            </div>
+          )}
 
           <div className="rounded-lg border border-taller-700 overflow-x-auto mb-4">
             <table className="w-full text-sm min-w-[640px]">

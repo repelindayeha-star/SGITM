@@ -1,8 +1,8 @@
 const prisma = require('../config/prismaClient');
 
-async function crear({ ordenId, descripcion, manoObra }) {
+async function crear({ ordenId, descripcion, observaciones, manoObra }) {
   return prisma.diagnostico.create({
-    data: { ordenId, descripcion, manoObra },
+    data: { ordenId, descripcion, observaciones, manoObra },
     include: { itemsCotizacion: true },
   });
 }
@@ -21,8 +21,8 @@ async function buscarPorId(id) {
   });
 }
 
-async function actualizar(id, { descripcion, manoObra }) {
-  return prisma.diagnostico.update({ where: { id }, data: { descripcion, manoObra } });
+async function actualizar(id, { descripcion, observaciones, manoObra }) {
+  return prisma.diagnostico.update({ where: { id }, data: { descripcion, observaciones, manoObra } });
 }
 
 module.exports = { crear, buscarPorOrdenId, buscarPorId, actualizar };

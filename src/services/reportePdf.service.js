@@ -154,6 +154,19 @@ function facturaPdf(factura) {
   ], { negrita: true, tam: 11.5 });
   y += 34;
 
+  // Observaciones del mecanico. Van DESPUES del total y con recuadro, porque
+  // no son un cargo: son la advertencia que el cliente se lleva a la casa y
+  // lo que evita que vuelva por lo mismo dentro de un mes.
+  if (diagnostico?.observaciones) {
+    const alto = doc.heightOfString(diagnostico.observaciones, { width: doc.page.width - 124 }) + 34;
+    doc.rect(50, y, doc.page.width - 100, alto).fillAndStroke('#FDFAF3', LINEA);
+    doc.fillColor(GRIS).font('Helvetica-Bold').fontSize(8)
+      .text('OBSERVACIONES DEL MECANICO', 62, y + 10);
+    doc.fillColor('#1a1a1a').font('Helvetica').fontSize(9.5)
+      .text(diagnostico.observaciones, 62, y + 22, { width: doc.page.width - 124 });
+    y += alto + 12;
+  }
+
   doc.fillColor(GRIS).font('Helvetica').fontSize(8.5)
     .text(`Metodo de pago: ${factura.metodoPago}`, 50, y);
   doc.text(`Fecha de emision: ${fecha(factura.createdAt)}`, 50, y, {
