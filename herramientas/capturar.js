@@ -49,8 +49,8 @@ async function tomar(browser, { nombre, url, sesion, ancho = 1440, alto = 900, m
   if (sesion) {
     await page.goto(`${WEB}/login`, { waitUntil: 'domcontentloaded' });
     await page.evaluate((s) => {
-      localStorage.setItem('token', s.token);
-      localStorage.setItem('usuario', JSON.stringify(s.usuario));
+      sessionStorage.setItem('token', s.token);
+      sessionStorage.setItem('usuario', JSON.stringify(s.usuario));
     }, sesion);
   }
 

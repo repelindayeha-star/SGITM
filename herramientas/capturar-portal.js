@@ -35,8 +35,8 @@ const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
   await page.goto(`${WEB}/login`, { waitUntil: 'domcontentloaded' });
   await page.evaluate((s) => {
-    localStorage.setItem('token', s.token);
-    localStorage.setItem('usuario', JSON.stringify(s.usuario));
+    sessionStorage.setItem('token', s.token);
+    sessionStorage.setItem('usuario', JSON.stringify(s.usuario));
   }, j.data);
 
   await page.goto(`${WEB}/mis-ordenes`, { waitUntil: 'networkidle2', timeout: 60000 });
