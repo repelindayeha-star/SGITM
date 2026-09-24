@@ -365,9 +365,18 @@ function PanelMecanico({ orden, usuario, onActualizado }) {
 // que hay en bodega. Esta lista es la misma del backend, que es quien manda.
 const ESTADOS_QUE_CONSUMEN = ['APROBADA', 'EN_REPARACION', 'LISTA', 'ENTREGADA'];
 
+// La cotizacion se arma antes de que el cliente apruebe. Despues queda
+// cerrada. Esta lista es espejo de la del backend, que es quien manda: aqui
+// solo sirve para no ofrecer un boton que va a responder 400.
+const ESTADOS_COTIZABLES = ['EN_DIAGNOSTICO', 'EN_COTIZACION'];
+
 function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usuario, onActualizado }) {
   const puedeGestionar = puede(usuario, 'diagnostico', 'gestionar');
   const puedeDescontar = puede(usuario, 'inventario', 'descontarPorOrden');
+  const cotizacionAbierta = ESTADOS_COTIZABLES.includes(orden.estado);
+  // Editar la cotizacion = poder gestionarla Y que siga abierta.
+  const puedeEditarCotizacion = puedeGestionar && cotizacionAbierta;
+  const repuestoElegido = repuestos.find((r) => r.id === itemRepuestoId) || null;
   const [descontando, setDescontando] = useState(false);
   const [avisoStock, setAvisoStock] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -453,12 +462,19 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
     }
   }
 
+  // Al elegir un repuesto del inventario, el nombre y el precio se muestran
+  // pero no se editan: los fija el backend leyendo el repuesto. Se dejan
+  // visibles para que el mecanico vea que va a cotizar, no para cambiarlos.
   function manejarSeleccionRepuesto(repuestoId) {
     setItemRepuestoId(repuestoId);
     const rep = repuestos.find((r) => r.id === repuestoId);
     if (rep) {
-      setItemDescripcion(rep.nombre);
+      setItemDescripcion(`${rep.nombre} (${rep.codigo})`);
       setItemPrecio(String(rep.precio));
+      setItemCantidad('1');
+    } else {
+      setItemDescripcion('');
+      setItemPrecio('');
     }
   }
 
@@ -557,7 +573,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Precio unit.</th>
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Subtotal</th>
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Almacen</th>
-                  {puedeGestionar && <th className="px-4 py-2.5" />}
+                  {puedeEditarCotizacion && <th className="px-4 py-2.5" />}
                 </tr>
               </thead>
               <tbody>
@@ -583,11 +599,17 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                         <span className="text-ambar-400">Pendiente</span>
                       )}
                     </td>
-                    {puedeGestionar && (
+                    {puedeEditarCotizacion && (
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => manejarEliminarItem(item.id)}
-                          className="text-taller-400 hover:text-red-400 transition-colors"
+                          disabled={Boolean(item.descontadoEn)}
+                          title={
+                            item.descontadoEn
+                              ? 'Ya salio del almacen: para devolverlo, registra una entrada en inventario.'
+                              : 'Quitar de la cotizacion'
+                          }
+                          className="text-taller-400 hover:text-red-400 disabled:opacity-30 disabled:hover:text-taller-400 transition-colors"
                           aria-label="Eliminar item"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -598,7 +620,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                 ))}
                 {(diagnostico.itemsCotizacion || []).length === 0 && (
                   <tr>
-                    <td colSpan={puedeGestionar ? 6 : 5} className="px-4 py-4 text-taller-400 text-xs text-center">
+                    <td colSpan={puedeEditarCotizacion ? 6 : 5} className="px-4 py-4 text-taller-400 text-xs text-center">
                       Sin items de cotizacion todavia.
                     </td>
                   </tr>
@@ -627,7 +649,14 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
             onDescontar={manejarDescontarInventario}
           />
 
-          {puedeGestionar && !mostrarFormItem && (
+          {puedeGestionar && !cotizacionAbierta && (
+            <p className="text-taller-400 text-xs italic">
+              La cotizacion quedo cerrada cuando el cliente aprobo el trabajo. Lo
+              que aparece arriba es lo que aprobo y lo que se le cobra.
+            </p>
+          )}
+
+          {puedeEditarCotizacion && !mostrarFormItem && (
             <button
               onClick={() => setMostrarFormItem(true)}
               className="flex items-center gap-1.5 text-ambar-400 hover:text-ambar-300 text-sm font-medium transition-colors"
@@ -637,7 +666,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
             </button>
           )}
 
-          {puedeGestionar && mostrarFormItem && (
+          {puedeEditarCotizacion && mostrarFormItem && (
             <form onSubmit={manejarAgregarItem} className="border-t border-taller-700 pt-4 mt-2 max-w-xl space-y-3">
               <Select
                 etiqueta="Repuesto del inventario (opcional)"
@@ -646,35 +675,47 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
               >
                 <option value="">Item libre (sin repuesto asociado)</option>
                 {repuestos.map((r) => (
-                  <option key={r.id} value={r.id}>
+                  <option key={r.id} value={r.id} disabled={r.stock < 1}>
                     {r.nombre} - stock {r.stock}
+                    {r.stock < 1 ? ' (agotado)' : ''}
                   </option>
                 ))}
               </Select>
               <Input
-                etiqueta="Descripcion"
-                required
+                etiqueta={repuestoElegido ? 'Descripcion (la toma del inventario)' : 'Descripcion'}
+                required={!repuestoElegido}
+                readOnly={Boolean(repuestoElegido)}
                 value={itemDescripcion}
                 onChange={(e) => setItemDescripcion(e.target.value)}
+                className={repuestoElegido ? 'opacity-70 cursor-not-allowed' : undefined}
               />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Input
-                  etiqueta="Cantidad"
+                  etiqueta={repuestoElegido ? `Cantidad (hay ${repuestoElegido.stock})` : 'Cantidad'}
                   type="number"
                   min={1}
+                  max={repuestoElegido ? repuestoElegido.stock : undefined}
                   required
                   value={itemCantidad}
                   onChange={(e) => setItemCantidad(e.target.value)}
                 />
                 <Input
-                  etiqueta="Precio unitario"
+                  etiqueta={repuestoElegido ? 'Precio unitario (fijo del inventario)' : 'Precio unitario'}
                   type="number"
                   min={0}
-                  required
+                  required={!repuestoElegido}
+                  readOnly={Boolean(repuestoElegido)}
                   value={itemPrecio}
                   onChange={(e) => setItemPrecio(e.target.value)}
+                  className={repuestoElegido ? 'opacity-70 cursor-not-allowed' : undefined}
                 />
               </div>
+              {repuestoElegido && (
+                <p className="text-taller-500 text-xs">
+                  El precio de un repuesto lo fija el inventario, no la orden. Para
+                  cambiarlo hay que cambiarlo en el modulo de Inventario.
+                </p>
+              )}
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
