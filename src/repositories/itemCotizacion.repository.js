@@ -14,8 +14,13 @@ async function listarPorDiagnostico(diagnosticoId) {
   });
 }
 
+// Se trae el diagnostico para saber a que orden pertenece la linea: de eso
+// dependen el control de dueno y el bloqueo por estado de la orden.
 async function buscarPorId(id) {
-  return prisma.itemCotizacion.findUnique({ where: { id }, include: { repuesto: true } });
+  return prisma.itemCotizacion.findUnique({
+    where: { id },
+    include: { repuesto: true, diagnostico: { select: { id: true, ordenId: true } } },
+  });
 }
 
 async function eliminar(id) {

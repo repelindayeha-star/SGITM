@@ -3,6 +3,8 @@ const ordenRepository = require('../repositories/ordenTrabajo.repository');
 const motocicletaRepository = require('../repositories/motocicleta.repository');
 const citaRepository = require('../repositories/cita.repository');
 const facturaRepository = require('../repositories/factura.repository');
+const diagnosticoRepository = require('../repositories/diagnostico.repository');
+const itemRepository = require('../repositories/itemCotizacion.repository');
 const AppError = require('../utils/AppError');
 
 // Personal del taller: accede a la informacion operativa completa.
@@ -151,6 +153,25 @@ const duenoDeOrdenEnParametro = (nombre) => async (req) => {
   return orden?.clienteId;
 };
 
+// ── De un diagnostico o una linea de cotizacion a su orden ─────────────
+// `soloOrdenAsignadaSiMecanico` pregunta por la orden. El diagnostico y sus
+// items no la llevan en la URL, asi que hay que buscarla.
+
+const ordenDeDiagnostico = (nombre) => async (req) => {
+  const diagnostico = await diagnosticoRepository.buscarPorId(req.params[nombre]);
+  return diagnostico?.ordenId;
+};
+
+const ordenDeDiagnosticoEnCuerpo = (campo) => async (req) => {
+  const diagnostico = await diagnosticoRepository.buscarPorId(req.body[campo]);
+  return diagnostico?.ordenId;
+};
+
+const ordenDeItemCotizacion = (nombre) => async (req) => {
+  const item = await itemRepository.buscarPorId(req.params[nombre]);
+  return item?.diagnostico?.ordenId;
+};
+
 module.exports = {
   soloPropioSiCliente,
   soloOrdenAsignadaSiMecanico,
@@ -162,4 +183,7 @@ module.exports = {
   duenoDeCita,
   duenoDeFactura,
   duenoDeOrdenEnParametro,
+  ordenDeDiagnostico,
+  ordenDeDiagnosticoEnCuerpo,
+  ordenDeItemCotizacion,
 };

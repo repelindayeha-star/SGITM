@@ -41,7 +41,11 @@ const validarAgregarItem = [
     .optional()
     .isUUID().withMessage('El repuestoId debe ser un UUID válido.'),
 
+  // Cuando la linea es un repuesto del inventario, el nombre y el precio los
+  // pone el servidor desde el repuesto: aqui no se exigen, y si llegan se
+  // ignoran mas adelante. Solo el item libre tiene que traerlos.
   body('descripcion')
+    .if(body('repuestoId').not().exists({ checkFalsy: true }))
     .trim()
     .notEmpty().withMessage('La descripción del ítem es obligatoria.'),
 
@@ -50,6 +54,7 @@ const validarAgregarItem = [
     .isInt({ min: 1 }).withMessage('La cantidad debe ser un entero mayor a 0.'),
 
   body('precioUnitario')
+    .if(body('repuestoId').not().exists({ checkFalsy: true }))
     .notEmpty().withMessage('El precio unitario es obligatorio.')
     .isFloat({ min: 0 }).withMessage('El precio unitario debe ser mayor o igual a 0.'),
 ];
