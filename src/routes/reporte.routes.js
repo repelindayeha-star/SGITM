@@ -2,6 +2,7 @@ const { Router } = require('express');
 const reporteController = require('../controllers/reporte.controller');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
+const { soloPropioSiCliente, duenoDeFactura } = require('../middlewares/propiedad.middleware');
 
 const router = Router();
 
@@ -9,9 +10,17 @@ const router = Router();
 // Por eso llevan la misma exigencia que el resto: hay que estar autenticado.
 router.use(autenticar);
 
-// La factura la puede descargar quien puede ver la orden. El control de que
-// un cliente no vea la factura de otro ya vive en el servicio de facturas.
-router.get('/facturas/:id.pdf', reporteController.facturaEnPdf);
+// El PDF de la factura lo descarga el taller (administrador y recepcionista)
+// y el cliente al que se le cobro. El comentario anterior decia que el control
+// de dueno vivia en el servicio de facturas; no era cierto: obtenerPorId no
+// recibia el usuario. Cualquier sesion valida con el UUID a la mano se bajaba
+// la factura de otro. El candado esta ahora aqui, igual que en /api/facturas.
+router.get(
+  '/facturas/:id.pdf',
+  autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'CLIENTE'),
+  soloPropioSiCliente(duenoDeFactura),
+  reporteController.facturaEnPdf
+);
 
 // Los informes agregados son del negocio, no de un cliente: solo los ve quien
 // administra el taller.

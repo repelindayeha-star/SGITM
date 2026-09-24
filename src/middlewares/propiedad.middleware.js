@@ -2,6 +2,7 @@ const clienteRepository = require('../repositories/cliente.repository');
 const ordenRepository = require('../repositories/ordenTrabajo.repository');
 const motocicletaRepository = require('../repositories/motocicleta.repository');
 const citaRepository = require('../repositories/cita.repository');
+const facturaRepository = require('../repositories/factura.repository');
 const AppError = require('../utils/AppError');
 
 // Personal del taller: accede a la informacion operativa completa.
@@ -138,6 +139,18 @@ const duenoDeCita = async (req) => {
   return cita?.clienteId;
 };
 
+// La factura no tiene cliente propio: hereda el de la orden que cobra.
+const duenoDeFactura = async (req) => {
+  const factura = await facturaRepository.buscarPorId(req.params.id);
+  return factura?.orden?.clienteId;
+};
+
+// Para /facturas/orden/:ordenId, donde lo que llega es la orden, no la factura.
+const duenoDeOrdenEnParametro = (nombre) => async (req) => {
+  const orden = await ordenRepository.buscarPorId(req.params[nombre]);
+  return orden?.clienteId;
+};
+
 module.exports = {
   soloPropioSiCliente,
   soloOrdenAsignadaSiMecanico,
@@ -147,4 +160,6 @@ module.exports = {
   duenoDeOrden,
   duenoDeMotocicleta,
   duenoDeCita,
+  duenoDeFactura,
+  duenoDeOrdenEnParametro,
 };
