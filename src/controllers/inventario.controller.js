@@ -81,6 +81,28 @@ async function listarMovimientosPorRepuesto(req, res, next) {
   }
 }
 
+async function descontarRepuestosDeOrden(req, res, next) {
+  try {
+    const resultado = await inventarioService.descontarRepuestosDeOrden(req.params.ordenId);
+    res.status(201).json({
+      exito: true,
+      mensaje: `Se descontaron ${resultado.descontados} repuesto(s) del inventario.`,
+      data: resultado,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function listarConsumoDeOrden(req, res, next) {
+  try {
+    const movimientos = await inventarioService.listarConsumoDeOrden(req.params.ordenId);
+    res.status(200).json({ exito: true, data: movimientos });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   crearRepuesto,
   listarRepuestos,
@@ -89,6 +111,8 @@ module.exports = {
   actualizarRepuesto,
   eliminarRepuesto,
   registrarMovimiento,
+  descontarRepuestosDeOrden,
+  listarConsumoDeOrden,
   listarMovimientos,
   listarMovimientosPorRepuesto,
 };

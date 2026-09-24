@@ -51,9 +51,14 @@ const validarIdRepuesto = [
   param('id').isUUID().withMessage('El id debe ser un UUID válido.'),
 ];
 
+const validarOrdenIdConsumo = [
+  param('ordenId').isUUID().withMessage('El id de la orden debe ser un UUID válido.'),
+];
+
 module.exports = {
   validarCrearRepuesto,
   validarActualizarRepuesto,
   validarMovimiento,
   validarIdRepuesto,
+  validarOrdenIdConsumo,
 };

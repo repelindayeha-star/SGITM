@@ -188,6 +188,7 @@ model OrdenTrabajo {
   factura          Factura?
   historialEstados HistorialEstadoOrden[]
   evidencias       EvidenciaOrden[]
+  movimientos      MovimientoInventario[]
 
   @@map("ordenes_trabajo")
 }
@@ -243,6 +244,11 @@ model ItemCotizacion {
   descripcion    String
   cantidad       Int         @default(1)
   precioUnitario Decimal     @db.Decimal(10, 2)
+  // Momento en que este repuesto salio del almacen para este trabajo.
+  // Mientras sea null la linea es solo una intencion de cotizacion: el
+  // repuesto sigue contado en el stock. Sirve ademas para que descontar dos
+  // veces la misma orden no reste el doble.
+  descontadoEn   DateTime?
 
   @@map("items_cotizacion")
 }
@@ -274,8 +280,14 @@ model MovimientoInventario {
   tipo       TipoMovimiento
   cantidad   Int
   motivo     String
+  // Orden que consumio el repuesto. Null en las compras y en las salidas
+  // sueltas que registra recepcion. Con esto el almacen responde "en que se
+  // gasto", no solo "cuanto salio".
+  ordenId    String?
+  orden      OrdenTrabajo?  @relation(fields: [ordenId], references: [id])
   createdAt  DateTime       @default(now())
 
+  @@index([ordenId])
   @@map("movimientos_inventario")
 }
 
