@@ -7,6 +7,7 @@ import EmptyState from '../components/EmptyState';
 import EstadoBadge from '../components/EstadoBadge';
 import LineaTiempoOrden from '../components/LineaTiempoOrden';
 import GaleriaEvidencias from '../components/GaleriaEvidencias';
+import BotonFacturaPdf from '../components/BotonFacturaPdf';
 import Modal from '../components/Modal';
 import { Select, Input, Textarea } from '../components/Campo';
 import { formatearFechaHora, formatearMoneda, aInputDatetimeLocal } from '../utils/formato';
@@ -146,11 +147,18 @@ export default function PortalCliente() {
                         )}
 
                         {orden.factura && (
-                          <div className="border-t border-taller-700 pt-3 mt-3 flex items-center justify-between text-xs">
+                          <div className="border-t border-taller-700 pt-3 mt-3 flex items-center justify-between flex-wrap gap-2 text-xs">
                             <span className="text-taller-400 font-mono">{orden.factura.numero}</span>
-                            <span className="text-taller-100 font-semibold font-mono">
-                              {formatearMoneda(orden.factura.total)}
-                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-taller-100 font-semibold font-mono">
+                                {formatearMoneda(orden.factura.total)}
+                              </span>
+                              <BotonFacturaPdf
+                                facturaId={orden.factura.id}
+                                numero={orden.factura.numero}
+                                compacto
+                              />
+                            </div>
                           </div>
                         )}
                       </div>

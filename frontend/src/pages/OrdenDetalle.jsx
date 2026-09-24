@@ -26,6 +26,7 @@ import { formatearMoneda } from '../utils/formato';
 import * as ordenService from '../services/orden.service';
 import * as diagnosticoService from '../services/diagnostico.service';
 import * as facturaService from '../services/factura.service';
+import BotonFacturaPdf from '../components/BotonFacturaPdf';
 import * as inventarioService from '../services/inventario.service';
 import * as usuarioService from '../services/usuario.service';
 
@@ -57,10 +58,16 @@ export default function OrdenDetalle() {
         setTotalCotizacion(null);
       }
 
-      try {
-        const fact = await facturaService.obtenerPorOrden(id);
-        setFactura(fact);
-      } catch {
+      // Solo se consulta la factura si el rol puede verla. Para el mecanico
+      // la peticion devolveria 403 y ensuciaria la consola sin necesidad.
+      if (puede(usuario, 'facturas', 'ver')) {
+        try {
+          const fact = await facturaService.obtenerPorOrden(id);
+          setFactura(fact);
+        } catch {
+          setFactura(null);
+        }
+      } else {
         setFactura(null);
       }
     } catch {
@@ -68,7 +75,7 @@ export default function OrdenDetalle() {
     } finally {
       setCargando(false);
     }
-  }, [id]);
+  }, [id, usuario]);
 
   useEffect(() => {
     cargarTodo();
@@ -678,7 +685,10 @@ function PanelFactura({ orden, diagnostico, factura, usuario, onActualizado }) {
             <p className="text-taller-100 font-mono text-sm">{factura.numero}</p>
             <p className="text-taller-400 text-xs">{factura.metodoPago}</p>
           </div>
-          <p className="text-ambar-400 font-display text-xl font-semibold">{formatearMoneda(factura.total)}</p>
+          <div className="flex items-center gap-4">
+            <p className="text-ambar-400 font-display text-xl font-semibold">{formatearMoneda(factura.total)}</p>
+            <BotonFacturaPdf facturaId={factura.id} numero={factura.numero} />
+          </div>
         </div>
       ) : puedeFacturar ? (
         <button

@@ -7,6 +7,7 @@ import EmptyState from '../components/EmptyState';
 import CargandoInline from '../components/CargandoInline';
 import ErrorBanner from '../components/ErrorBanner';
 import Badge from '../components/Badge';
+import BotonFacturaPdf from '../components/BotonFacturaPdf';
 import { formatearMoneda, formatearFecha } from '../utils/formato';
 import * as facturaService from '../services/factura.service';
 
@@ -43,7 +44,7 @@ export default function Facturas() {
 
       {!cargando && facturas.length > 0 && (
         <div className="relative bg-taller-850 border border-taller-700 rounded-xl overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[720px]">
             <thead>
               <tr className="border-b border-taller-700 text-left">
                 <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Numero</th>
@@ -52,6 +53,7 @@ export default function Facturas() {
                 <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Metodo de pago</th>
                 <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide">Fecha</th>
                 <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide text-right">Total</th>
+                <th className="px-3 sm:px-5 py-3 text-taller-400 font-medium text-xs uppercase tracking-wide text-right">Factura</th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +72,9 @@ export default function Facturas() {
                   <td className="px-3 sm:px-5 py-3.5 text-taller-400 text-xs">{formatearFecha(f.createdAt)}</td>
                   <td className="px-3 sm:px-5 py-3.5 text-right text-taller-100 font-semibold font-mono">
                     {formatearMoneda(f.total)}
+                  </td>
+                  <td className="px-3 sm:px-5 py-3.5 text-right">
+                    <BotonFacturaPdf facturaId={f.id} numero={f.numero} compacto />
                   </td>
                 </tr>
               ))}
