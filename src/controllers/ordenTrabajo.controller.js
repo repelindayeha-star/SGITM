@@ -19,7 +19,9 @@ async function crear(req, res, next) {
 
 async function listar(req, res, next) {
   try {
-    const ordenes = await ordenService.listar();
+    // Se pasa el usuario: el listado que ve un mecanico no es el mismo que
+    // ve recepcion. La decision vive en el servicio, no aqui.
+    const ordenes = await ordenService.listar(req.usuario);
     res.status(200).json({ exito: true, data: ordenes });
   } catch (error) {
     next(error);

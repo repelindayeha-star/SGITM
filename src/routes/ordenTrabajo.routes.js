@@ -8,6 +8,8 @@ const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
 const {
   soloPropioSiCliente,
+  soloOrdenAsignadaSiMecanico,
+  soloMiListaSiMecanico,
   duenoDesdeParametro,
   duenoDeOrden,
 } = require('../middlewares/propiedad.middleware');
@@ -51,6 +53,7 @@ router.get(
   validarIdOrden,
   validarCampos,
   soloPropioSiCliente(duenoDeOrden),
+  soloOrdenAsignadaSiMecanico(),
   ordenController.obtenerPorId
 );
 
@@ -63,6 +66,7 @@ router.get(
 router.get(
   '/mecanico/:mecanicoId',
   autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
+  soloMiListaSiMecanico,
   ordenController.listarPorMecanico
 );
 
@@ -79,6 +83,7 @@ router.patch(
   autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
   validarCambiarEstadoOrden,
   validarCampos,
+  soloOrdenAsignadaSiMecanico(),
   ordenController.cambiarEstado
 );
 
@@ -87,6 +92,7 @@ router.put(
   autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
   validarActualizarOrden,
   validarCampos,
+  soloOrdenAsignadaSiMecanico(),
   ordenController.actualizar
 );
 
@@ -111,6 +117,7 @@ router.get(
   validarIdOrden,
   validarCampos,
   soloPropioSiCliente(duenoDeOrden),
+  soloOrdenAsignadaSiMecanico(),
   evidenciaController.listar
 );
 
@@ -121,6 +128,7 @@ router.post(
   autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
   validarIdOrden,
   validarCampos,
+  soloOrdenAsignadaSiMecanico(),
   recibirImagen('imagen'),
   validarEvidencia,
   validarCampos,
@@ -130,6 +138,7 @@ router.post(
 router.delete(
   '/:id/evidencias/:evidenciaId',
   autorizarRoles('ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'),
+  soloOrdenAsignadaSiMecanico(),
   evidenciaController.eliminar
 );
 

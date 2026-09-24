@@ -6,9 +6,9 @@ const AppError = require('../utils/AppError');
 
 // Personal del taller: accede a la informacion operativa completa.
 //
-// (Afinar el alcance del MECANICO a "solo las ordenes que tiene asignadas"
-//  queda para la fase de coherencia de permisos. Hoy la interfaz le muestra
-//  todas las ordenes, asi que restringirlo aqui romperia la pantalla.)
+// El MECANICO sigue aqui para lo que es propiedad DEL CLIENTE: ver una moto
+// o una cita no depende de a quien se le asigno. Lo que si depende, las
+// ordenes de trabajo, lo restringe `soloOrdenAsignadaSiMecanico`.
 const ROLES_STAFF = ['ADMINISTRADOR', 'RECEPCIONISTA', 'MECANICO'];
 
 // Valor imposible de igualar por accidente: un CLIENTE sin perfil creado
@@ -61,6 +61,62 @@ function soloPropioSiCliente(resolverDuenoId) {
   };
 }
 
+/**
+ * Autorizacion horizontal entre mecanicos.
+ *
+ * Un mecanico solo trabaja las ordenes que le asignaron. Antes bastaba con
+ * tener sesion de mecanico: cambiando el UUID de la URL se podia abrir la
+ * orden de un companero, cambiarle el estado o subirle fotos, y el historial
+ * quedaba firmado con el nombre equivocado.
+ *
+ * Administrador y recepcionista no se restringen: ellos coordinan el taller
+ * y necesitan ver todo.
+ *
+ * `obtenerOrdenId` permite usarlo tanto donde la orden viene en la URL como
+ * donde viene en el cuerpo de la peticion.
+ */
+function soloOrdenAsignadaSiMecanico(obtenerOrdenId = (req) => req.params.id) {
+  return async (req, res, next) => {
+    try {
+      if (!req.usuario) {
+        return next(new AppError('No autenticado.', 401));
+      }
+
+      if (req.usuario.rol !== 'MECANICO') {
+        return next();
+      }
+
+      const ordenId = await obtenerOrdenId(req);
+      const orden = ordenId ? await ordenRepository.buscarPorId(ordenId) : null;
+
+      // Misma respuesta exista o no la orden: distinguir "no encontrada" de
+      // "no es tuya" le confirmaria a quien prueba UUIDs cuales son reales.
+      if (!orden || orden.mecanicoId !== req.usuario.id) {
+        return next(new AppError('No tienes acceso a esta orden de trabajo.', 403));
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+/**
+ * Para /ordenes/mecanico/:mecanicoId: un mecanico solo puede consultar SU
+ * propia lista. Sin esto, cambiar el id en la URL mostraba la carga de
+ * trabajo de un companero.
+ */
+function soloMiListaSiMecanico(req, res, next) {
+  if (!req.usuario) {
+    return next(new AppError('No autenticado.', 401));
+  }
+  if (req.usuario.rol === 'MECANICO' && req.params.mecanicoId !== req.usuario.id) {
+    return next(new AppError('No tienes acceso a las ordenes de otro mecanico.', 403));
+  }
+  next();
+}
+
 // ── Resolutores ────────────────────────────────────────────────────────
 // Cada uno responde una sola pregunta: ¿de que cliente es este recurso?
 
@@ -84,6 +140,8 @@ const duenoDeCita = async (req) => {
 
 module.exports = {
   soloPropioSiCliente,
+  soloOrdenAsignadaSiMecanico,
+  soloMiListaSiMecanico,
   clienteIdDeUsuario,
   duenoDesdeParametro,
   duenoDeOrden,

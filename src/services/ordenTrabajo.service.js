@@ -44,7 +44,19 @@ async function crear({ clienteId, motocicletaId, descripcionProblema, usuarioId 
   return ordenRepository.crear({ codigo, clienteId, motocicletaId, descripcionProblema, usuarioId });
 }
 
-async function listar() {
+/**
+ * El listado depende de quien pregunta.
+ *
+ * Un mecanico solo trabaja las ordenes que le asignaron, asi que su lista es
+ * la suya. Antes el listado devolvia TODAS a cualquiera del taller: el
+ * mecanico veia -- y podia abrir -- las de sus companeros.
+ *
+ * Administrador y recepcionista coordinan el taller y siguen viendo todo.
+ */
+async function listar(usuario) {
+  if (usuario?.rol === 'MECANICO') {
+    return ordenRepository.listarPorMecanico(usuario.id);
+  }
   return ordenRepository.listar();
 }
 

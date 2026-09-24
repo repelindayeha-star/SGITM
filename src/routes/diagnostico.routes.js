@@ -3,6 +3,7 @@ const diagnosticoController = require('../controllers/diagnostico.controller');
 const validarCampos = require('../middlewares/validarCampos');
 const autenticar = require('../middlewares/auth.middleware');
 const autorizarRoles = require('../middlewares/roles.middleware');
+const { soloOrdenAsignadaSiMecanico } = require('../middlewares/propiedad.middleware');
 const {
   validarCrearDiagnostico,
   validarActualizarDiagnostico,
@@ -21,6 +22,9 @@ router.post(
   autorizarRoles('ADMINISTRADOR', 'MECANICO'),
   validarCrearDiagnostico,
   validarCampos,
+  // La orden llega en el cuerpo, no en la URL: sin esto un mecanico podia
+  // diagnosticar y cotizar la orden de un companero.
+  soloOrdenAsignadaSiMecanico((req) => req.body.ordenId),
   diagnosticoController.crearDiagnostico
 );
 
