@@ -44,3 +44,15 @@ export async function listarMovimientos() {
   const { data } = await api.get('/inventario/movimientos');
   return data.data;
 }
+
+// Descuenta del almacen los repuestos de la cotizacion de esta orden que
+// todavia no han salido. Llamarlo dos veces no resta dos veces.
+export async function descontarConsumoDeOrden(ordenId) {
+  const { data } = await api.post(`/inventario/ordenes/${ordenId}/consumo`);
+  return data;
+}
+
+export async function listarConsumoDeOrden(ordenId) {
+  const { data } = await api.get(`/inventario/ordenes/${ordenId}/consumo`);
+  return data.data;
+}

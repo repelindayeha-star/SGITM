@@ -40,6 +40,9 @@ const PERMISOS = {
     crear: ['RECEPCIONISTA'],
     editar: ['RECEPCIONISTA'],
     registrarMovimiento: ['RECEPCIONISTA'],
+    // Descontar lo que se gasto en una orden lo hace quien estuvo en el
+    // trabajo. El administrador lo consulta, no lo ejecuta.
+    descontarPorOrden: ['RECEPCIONISTA', 'MECANICO'],
   },
   facturas: {
     ver: ['ADMINISTRADOR', 'RECEPCIONISTA'],

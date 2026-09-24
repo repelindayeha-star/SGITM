@@ -8,6 +8,8 @@ import {
   ClipboardList,
   Plus,
   Trash2,
+  PackageMinus,
+  PackageCheck,
   Receipt,
   LoaderCircle,
 } from 'lucide-react';
@@ -358,8 +360,16 @@ function PanelMecanico({ orden, usuario, onActualizado }) {
   );
 }
 
+// Los repuestos salen del almacen cuando el cliente ya aprobo el trabajo.
+// Mientras la cotizacion sea una propuesta, restarlos seria mentir sobre lo
+// que hay en bodega. Esta lista es la misma del backend, que es quien manda.
+const ESTADOS_QUE_CONSUMEN = ['APROBADA', 'EN_REPARACION', 'LISTA', 'ENTREGADA'];
+
 function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usuario, onActualizado }) {
   const puedeGestionar = puede(usuario, 'diagnostico', 'gestionar');
+  const puedeDescontar = puede(usuario, 'inventario', 'descontarPorOrden');
+  const [descontando, setDescontando] = useState(false);
+  const [avisoStock, setAvisoStock] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [observaciones, setObservaciones] = useState('');
   const [manoObra, setManoObra] = useState('');
@@ -372,6 +382,21 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
   const [itemCantidad, setItemCantidad] = useState('1');
   const [itemPrecio, setItemPrecio] = useState('');
   const [guardandoItem, setGuardandoItem] = useState(false);
+
+  async function manejarDescontarInventario() {
+    setDescontando(true);
+    setAvisoStock('');
+    setErrorLocal('');
+    try {
+      const respuesta = await inventarioService.descontarConsumoDeOrden(orden.id);
+      setAvisoStock(respuesta.mensaje || 'Repuestos descontados del inventario.');
+      onActualizado();
+    } catch (err) {
+      setErrorLocal(err.response?.data?.mensaje || 'No se pudo descontar del inventario.');
+    } finally {
+      setDescontando(false);
+    }
+  }
 
   async function manejarCrearDiagnostico(e) {
     e.preventDefault();
@@ -524,13 +549,14 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
           )}
 
           <div className="rounded-lg border border-taller-700 overflow-x-auto mb-4">
-            <table className="w-full text-sm min-w-[640px]">
+            <table className="w-full text-sm min-w-[760px]">
               <thead>
                 <tr className="border-b border-taller-700 text-left bg-taller-900/40">
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Item</th>
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Cant.</th>
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Precio unit.</th>
                   <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Subtotal</th>
+                  <th className="px-4 py-2.5 text-taller-400 font-medium text-xs uppercase tracking-wide">Almacen</th>
                   {puedeGestionar && <th className="px-4 py-2.5" />}
                 </tr>
               </thead>
@@ -542,6 +568,20 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                     <td className="px-4 py-2.5 text-taller-200 font-mono text-xs">{formatearMoneda(item.precioUnitario)}</td>
                     <td className="px-4 py-2.5 text-taller-200 font-mono text-xs">
                       {formatearMoneda(item.precioUnitario * item.cantidad)}
+                    </td>
+                    <td className="px-4 py-2.5 text-xs">
+                      {!item.repuestoId ? (
+                        <span className="text-taller-500" title="Item libre: no sale del inventario">
+                          No aplica
+                        </span>
+                      ) : item.descontadoEn ? (
+                        <span className="inline-flex items-center gap-1 text-emerald-400">
+                          <PackageCheck className="w-3.5 h-3.5" />
+                          Descontado
+                        </span>
+                      ) : (
+                        <span className="text-ambar-400">Pendiente</span>
+                      )}
                     </td>
                     {puedeGestionar && (
                       <td className="px-4 py-2.5">
@@ -558,7 +598,7 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
                 ))}
                 {(diagnostico.itemsCotizacion || []).length === 0 && (
                   <tr>
-                    <td colSpan={puedeGestionar ? 5 : 4} className="px-4 py-4 text-taller-400 text-xs text-center">
+                    <td colSpan={puedeGestionar ? 6 : 5} className="px-4 py-4 text-taller-400 text-xs text-center">
                       Sin items de cotizacion todavia.
                     </td>
                   </tr>
@@ -577,6 +617,15 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
               </span>
             </div>
           )}
+
+          <BloqueInventario
+            orden={orden}
+            items={diagnostico.itemsCotizacion || []}
+            puedeDescontar={puedeDescontar}
+            descontando={descontando}
+            aviso={avisoStock}
+            onDescontar={manejarDescontarInventario}
+          />
 
           {puedeGestionar && !mostrarFormItem && (
             <button
@@ -646,6 +695,63 @@ function PanelDiagnostico({ orden, diagnostico, totalCotizacion, repuestos, usua
             </form>
           )}
         </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Salida de repuestos al almacen.
+ *
+ * Quien repara es quien sabe que gasto, asi que el descuento se pulsa aqui,
+ * dentro de la orden, y no en el modulo de inventario al final del dia. El
+ * boton solo aparece cuando queda algo por descontar: las lineas ya salidas
+ * se marcan una a una en la columna "Almacen" de la cotizacion.
+ */
+function BloqueInventario({ orden, items, puedeDescontar, descontando, aviso, onDescontar }) {
+  const deInventario = items.filter((i) => i.repuestoId);
+  if (deInventario.length === 0) return null;
+
+  const pendientes = deInventario.filter((i) => !i.descontadoEn);
+  const ordenConsume = ESTADOS_QUE_CONSUMEN.includes(orden.estado);
+
+  return (
+    <div className="border-t border-taller-700 pt-4 mb-4">
+      {aviso && <p className="text-emerald-400 text-xs mb-2">{aviso}</p>}
+
+      {pendientes.length === 0 ? (
+        <p className="inline-flex items-center gap-1.5 text-emerald-400 text-xs">
+          <PackageCheck className="w-4 h-4" />
+          Los {deInventario.length} repuesto(s) de esta orden ya salieron del inventario.
+        </p>
+      ) : !puedeDescontar ? (
+        <p className="text-taller-400 text-xs italic">
+          Quedan {pendientes.length} repuesto(s) por descontar del inventario.
+        </p>
+      ) : !ordenConsume ? (
+        <p className="text-taller-400 text-xs italic">
+          Los repuestos se descuentan cuando el cliente aprueba el trabajo. La orden
+          esta en {orden.estado}.
+        </p>
+      ) : (
+        <div>
+          <button
+            onClick={onDescontar}
+            disabled={descontando}
+            className="inline-flex items-center gap-2 border border-taller-600 hover:border-ambar-400 hover:text-ambar-400 disabled:opacity-60 text-taller-200 text-sm font-medium rounded-md px-3.5 py-2 transition-colors"
+          >
+            {descontando ? (
+              <LoaderCircle className="w-4 h-4 animate-spin" />
+            ) : (
+              <PackageMinus className="w-4 h-4" />
+            )}
+            Descontar {pendientes.length} repuesto(s) del inventario
+          </button>
+          <p className="text-taller-500 text-xs mt-1.5">
+            Resta del stock lo que dice la cotizacion y deja el movimiento de salida
+            a nombre de esta orden. Pulsarlo dos veces no resta el doble.
+          </p>
+        </div>
       )}
     </div>
   );
